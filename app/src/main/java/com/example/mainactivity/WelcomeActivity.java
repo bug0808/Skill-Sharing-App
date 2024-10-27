@@ -25,7 +25,17 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        setContentView(R.layout.activity_welcome); // Make sure to set your correct layout
 
+        // Assuming you have a button for email connection
+        Button emailConnectButton = findViewById(R.id.emailConnect);
+        emailConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the LoginActivity
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

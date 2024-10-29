@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -33,23 +34,34 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email;
 
     private static final String TAG = "LoginActivity";
+    private TextView loginTextView;
+    private TextView signupTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Initialize TextViews after setContentView
+        loginTextView = findViewById(R.id.loginTextView);
+        signupTextView = findViewById(R.id.signupTextView);
+
         // Load the LoginFragment by default when the activity is created
         if (savedInstanceState == null) {
-            loadFragment(new LoginFragment()); // This line ensures LoginFragment is shown first
+            loadFragment(new LoginFragment()); // Ensures LoginFragment is shown first
+            highlightSelectedOption(loginTextView); // Highlight the login option by default
         }
 
-        // Set click listeners for Login and Sign Up options
-        TextView loginTextView = findViewById(R.id.loginTextView);
-        TextView signupTextView = findViewById(R.id.signupTextView);
+        // Set click listeners to switch fragments and toggle highlight
+        loginTextView.setOnClickListener(v -> {
+            loadFragment(new LoginFragment());
+            highlightSelectedOption(loginTextView);
+        });
 
-        loginTextView.setOnClickListener(v -> loadFragment(new LoginFragment()));
-        signupTextView.setOnClickListener(v -> loadFragment(new SignUpFragment()));
+        signupTextView.setOnClickListener(v -> {
+            loadFragment(new SignUpFragment());
+            highlightSelectedOption(signupTextView);
+        });
     }
 
     private void loadFragment(Fragment fragment) {
@@ -58,6 +70,18 @@ public class LoginActivity extends AppCompatActivity {
                 .replace(R.id.fragmentContainer, fragment)
                 .commit();
     }
+
+    private void highlightSelectedOption(TextView selectedTextView) {
+        // Set color for selected and unselected states
+        loginTextView.setSelected(false);
+        signupTextView.setSelected(false);
+        loginTextView.setTextColor(ContextCompat.getColor(this, R.color.blueDark));
+        signupTextView.setTextColor(ContextCompat.getColor(this, R.color.blueDark));
+        // Select the clicked TextView
+        selectedTextView.setSelected(true);
+        selectedTextView.setTextColor(ContextCompat.getColor(this, R.color.blueLightest));
+    }
+
 
     //validate the email and password input
     /** private boolean validateInput(String email, String password) {

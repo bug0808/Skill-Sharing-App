@@ -1,0 +1,14 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners
+        android:radius="16dp" />
+    <solid android:color="@drawable/login_signup_textview" />
+    <padding
+        android:left="16dp"
+        android:top="8dp"
+        android:right="16dp"
+        android:bottom="8dp" />
+    <shadow
+        android:color="#4D000000"
+        android:radius="4dp" />
+</shape>

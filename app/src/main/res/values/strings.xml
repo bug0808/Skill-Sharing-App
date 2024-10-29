@@ -55,4 +55,5 @@
     <string name="title_home">home</string>
     <string name="title_dashboard">dashboard\n</string>
     <string name="title_notifications">notifications\n</string>
+    <string name="title_profile">Profile</string>
 </resources>

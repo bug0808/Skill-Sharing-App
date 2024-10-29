@@ -10,6 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.mainactivity.databinding.ActivityBottomViewBinding;
 
@@ -69,5 +70,15 @@ public class BottomViewActivity extends AppCompatActivity {
         }
         return false;
     };
+
+    public void switchToHome() {
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container, new FirstFragment()).commit();
+    }
+
+    public void switchToDashboard() {
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.fragment_container, new DashboardFragment()).commit();
+    }
 
 }

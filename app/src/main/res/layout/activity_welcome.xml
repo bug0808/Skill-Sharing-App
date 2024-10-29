@@ -7,12 +7,10 @@
 
     <TextView
         android:id="@+id/welcomeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TitleTextStyle"
         android:text="Welcome to DoIt"
-        android:textStyle="bold"
-        android:textSize="24sp"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:textColor="@color/blueBase" />
 
     <TextView
         android:id="@+id/welcInfoTextView"
@@ -39,8 +37,8 @@
         style="@style/LoginButtonStyle"
         android:layout_below="@id/connectTextView"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@color/blueBase"
-        android:textColor="@color/blueLight"
+        android:backgroundTint="@color/blueLight"
+        android:textColor="@color/blueBase"
         android:text="Email" />
 
     <Button
@@ -48,8 +46,8 @@
         style="@style/LoginButtonStyle"
         android:layout_below="@id/emailConnect"
         android:layout_marginTop="8dp"
-        android:backgroundTint="@color/blueLight"
+        android:backgroundTint="@color/blueBase"
         android:text="Facebook"
-        android:textColor="@color/blueBase" />
+        android:textColor="@color/blueLight" />
 
 </RelativeLayout>

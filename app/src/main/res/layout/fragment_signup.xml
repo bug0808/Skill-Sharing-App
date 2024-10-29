@@ -8,42 +8,36 @@
     android:padding="24dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_gravity="center" />
+        style="@style/TitleTextStyle"
+        android:text="Sign Up" />
 
     <EditText
         android:id="@+id/signup_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/BubbleEditText"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:layout_marginTop="16dp"/>
 
     <EditText
         android:id="@+id/signup_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/BubbleEditText"
         android:hint="Password"
         android:inputType="textPassword"
         android:layout_marginTop="16dp"/>
 
     <EditText
         android:id="@+id/signup_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/BubbleEditText"
         android:hint="Confirm Password"
         android:inputType="textPassword"
         android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/signupButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/LoginButtonStyle"
         android:text="Sign Up"
-        android:layout_marginTop="24dp"/>
+        android:textColor="@color/blueLightest"
+        android:backgroundTint="@color/blueDark"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

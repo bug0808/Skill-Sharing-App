@@ -32,10 +32,16 @@ public class SignUpFragment extends Fragment {
             String confirmPassword = signupConfirmPassword.getText().toString();
 
             // Add your signup logic here
+
+            //check for valid email/safe password
+
             // For example, show a Toast message for testing
             Toast.makeText(getActivity(), "Sign Up clicked", Toast.LENGTH_SHORT).show();
         });
 
         return view;
+
+
+        //create a new user subclass with the data gathered.
     }
 }

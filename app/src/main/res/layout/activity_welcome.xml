@@ -59,4 +59,10 @@
         android:text="Facebook" />
 </androidx.cardview.widget.CardView>
 
+    <Button
+        android:id="@+id/reviewbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="go to review" />
+
 </RelativeLayout>

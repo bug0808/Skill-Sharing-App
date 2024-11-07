@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/blueLightest">
+
+    <TextView
+        style="@style/TitleTextStyle"
+        android:text="Profile Details"
+        android:textColor="@color/blueDark"/>
+
+    <!-- Horizontal layout for first and last name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/signup_firstName"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="First Name"
+            android:inputType="textPersonName"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/signup_lastName"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Last Name"
+            android:inputType="textPersonName"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/signupPhone"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_weight = "1"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/signupDOB"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_weight = "1"
+            android:layout_marginTop="16dp"
+            android:hint="Date of Birth"
+            android:inputType="date" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/signupButton"
+        style="@style/LoginButtonStyle"
+        android:text="Sign Up"
+        android:textColor="@color/blueLightest"
+        android:backgroundTint="@color/blueDark"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>

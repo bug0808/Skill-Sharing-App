@@ -21,14 +21,14 @@ import com.example.mainactivity.databinding.ActivityWelcomeBinding;
 public class WelcomeActivity extends AppCompatActivity {
 
     private LinearLayout bottomPanel;
-
+    private Button emailConnectButton, facebookConnectButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome); // Make sure to set your correct layout
 
         // Assuming you have a button for email connection
-        Button emailConnectButton = findViewById(R.id.emailConnect);
+        emailConnectButton = findViewById(R.id.emailConnect);
         emailConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

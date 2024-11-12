@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@color/blueLightest">
 
     <TextView
         style="@style/TitleTextStyle"
-        android:text="Sign Up" />
+        android:text="Sign Up"
+        android:textColor="@color/blueDark"/>
 
     <EditText
         android:id="@+id/signup_email"

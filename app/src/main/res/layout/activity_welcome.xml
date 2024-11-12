@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/welcomeTextView"
         style="@style/TitleTextStyle"
-        android:text="Welcome to DoIt"
+        android:text="Welcome to DoIT"
         android:layout_centerInParent="true"
         android:textColor="@color/blueBase" />
 

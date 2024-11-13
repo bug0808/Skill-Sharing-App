@@ -26,6 +26,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DOB = "date_of_birth";
     private static final String COLUMN_PERSONAL_ID = "personal_id";
 
+    // review table columns
+    private static final String COLUMN_USERID = "id";
+    private static final String COLUMN_REVIEWERID = "reviewId";
+    private static final String COLUMN_REVIEWTEXT = "reviewText";
+    private static final int COLUMN_RATING = 0;
+    
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -43,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_LAST_NAME + " TEXT,"
                 + COLUMN_DOB + " TEXT"
                 + ")";
-
         db.execSQL(CREATE_USERS_TABLE);
     }
 
@@ -54,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // user table functions
     // Insert a new user into the database
     public long addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -114,6 +120,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+     public boolean checkIfPhoneExists(String phone) {
+        SQLiteDatabase db = this.getReadableDatabase(); // Get a readable database
+        Cursor cursor = db.query(TABLE_USERS, null, COLUMN_PHONE + "=?", new String[]{phone},
+                null, null, null); // Query the database for the given email
+
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.close();
+            return true; // Email exists
+        } else {
+            cursor.close();
+            return false; // Email does not exist
+        }
+    }
+
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -155,9 +175,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();  // Always close the cursor in a finally block
             db.close();      // Close the database connection
         }
-
         return userList;
     }
 
     // Other operations (update, delete) can also be added similarly
+
+    //review table functions
 }

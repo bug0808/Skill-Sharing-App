@@ -1,8 +1,9 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.mainactivity.R;
 import com.example.mainactivity.ui.dashboard.DashboardFragment;
 import com.example.mainactivity.ui.home.FirstFragment;
 import com.example.mainactivity.ui.notifications.NotificationsFragment;

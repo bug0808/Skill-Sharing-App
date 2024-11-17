@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background Stars (Hollow) -->
+    <item android:id="@android:id/background"
+        android:drawable="@drawable/starhollow" />
+    <!-- Secondary Progress (for intermediate states, optional) -->
+    <item android:id="@android:id/secondaryProgress"
+        android:drawable="@drawable/starhollow" />
+    <!-- Filled Stars -->
+    <item android:id="@android:id/progress"
+        android:drawable="@drawable/starfilled" />
+</layer-list>

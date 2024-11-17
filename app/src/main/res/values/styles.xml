@@ -44,4 +44,12 @@
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
+    <style name="CustomRatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="android:progressDrawable">@drawable/rating_bar</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:maxHeight">1dp</item>
+        <item name="android:stepSize">1</item>
+        <item name="android:numStars">5</item>
+        <item name="android:isIndicator">true</item>
+    </style>
 </resources>

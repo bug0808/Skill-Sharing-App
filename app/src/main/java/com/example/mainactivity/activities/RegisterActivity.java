@@ -1,7 +1,8 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
 import android.os.Bundle;
 
+import com.example.mainactivity.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;

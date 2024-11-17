@@ -1,6 +1,4 @@
-package com.example.mainactivity;
-
-import java.util.UUID;
+package com.example.mainactivity.classes;
 
 public class User {
     private String firstName;
@@ -15,7 +13,7 @@ public class User {
     private static int lastAssignedId;
 
     // Constructor
-    public User(String firstName, String lastName, String dateOfBirth, String email, String phone, String password) {
+    public User(String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;

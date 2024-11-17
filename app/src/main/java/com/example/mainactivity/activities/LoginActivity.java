@@ -1,23 +1,15 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mainactivity.LoginFragment;
@@ -81,29 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         selectedTextView.setSelected(true);
         selectedTextView.setTextColor(ContextCompat.getColor(this, R.color.blueLightest));
     }
-
-
-    //validate the email and password input
-    /** private boolean validateInput(String email, String password) {
-        if (email.isEmpty()) {
-            this.email.setError(getString(R.string.emailReq));
-            return false;
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            this.email.setError(getString(R.string.emailInv));
-            return false;
-        }
-        if (password.isEmpty()) {
-            this.password.setError(getString(R.string.passwordReq));
-            return false;
-        }
-        if (password.length() < 6) {
-            this.password.setError(getString(R.string.passwordInv));
-            return false;
-        }
-        return true;
-    }
-    **/
 
     @Override
     protected void onStart() {

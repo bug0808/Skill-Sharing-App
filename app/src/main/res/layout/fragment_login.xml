@@ -32,6 +32,7 @@
         style="@style/LoginButtonStyle"
         android:text="Login"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@color/blueDark"/>
+        android:backgroundTint="@color/blueDark"
+        android:textColor="@color/blueLightest"/>
 
 </LinearLayout>

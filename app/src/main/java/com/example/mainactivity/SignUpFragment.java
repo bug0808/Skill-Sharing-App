@@ -35,8 +35,8 @@ public class SignUpFragment extends Fragment {
             // Validate input fields
             if (validateInput(email, password, confirmPassword)) {
                 // Check if email already exists in the database
-                DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-                if (dbHelper.checkIfEmailExists(email)) {
+                DatabaseHelper db = new DatabaseHelper(getContext());
+                if (db.checkIfEmailExists(email)) {
                     // If email exists, show error message
                     Toast.makeText(getContext(), "Email already registered", Toast.LENGTH_SHORT).show();
                 } else {
@@ -53,6 +53,7 @@ public class SignUpFragment extends Fragment {
                             .replace(R.id.fragmentContainer, detailsFragment)
                             .commit();
                 }
+                db.close();
             }
         });
 

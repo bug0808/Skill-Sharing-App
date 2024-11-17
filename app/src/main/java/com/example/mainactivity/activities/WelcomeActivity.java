@@ -1,22 +1,16 @@
-package com.example.mainactivity;
+package com.example.mainactivity.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.example.mainactivity.DatabaseHelper;
+import com.example.mainactivity.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.mainactivity.databinding.ActivityWelcomeBinding;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -26,6 +20,11 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome); // Make sure to set your correct layout
+
+        DatabaseHelper db = new DatabaseHelper(this);
+        //db.deleteUser(0);
+        db.logAllUsers(); // This will log the users to Logcat
+        db.close();
 
         // Assuming you have a button for email connection
         emailConnectButton = findViewById(R.id.emailConnect);

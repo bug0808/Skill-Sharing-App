@@ -5,6 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.example.mainactivity.classes.Review;
+import com.example.mainactivity.classes.User;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -33,18 +37,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create users table
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_PERSONAL_ID + " INTEGER UNIQUE,"
-                + COLUMN_PHONE + " TEXT,"
-                + COLUMN_EMAIL + " TEXT,"
-                + COLUMN_PASSWORD + " TEXT,"
-                + COLUMN_FIRST_NAME + " TEXT,"
-                + COLUMN_LAST_NAME + " TEXT,"
-                + COLUMN_DOB + " TEXT"
-                + ")";
-
+        // Create the users table
+        String CREATE_USERS_TABLE = "CREATE TABLE users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "personal_id INTEGER," +
+                "phone TEXT," +
+                "email TEXT," +
+                "password TEXT," +
+                "first_name TEXT," +
+                "last_name TEXT," +
+                "date_of_birth TEXT" +
+                ")";
         db.execSQL(CREATE_USERS_TABLE);
+
+        // Create the reviews table
+        String CREATE_REVIEWS_TABLE = "CREATE TABLE reviews (" +
+                "review_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "user_id INTEGER," +          // ID of the user being reviewed
+                "reviewer_id INTEGER," +      // ID of the user writing the review
+                "review_text TEXT," +
+                "rating INTEGER," +
+                "date TEXT," +
+                "FOREIGN KEY (user_id) REFERENCES users(id)," +
+                "FOREIGN KEY (reviewer_id) REFERENCES users(id)" +
+                ")";
+        db.execSQL(CREATE_REVIEWS_TABLE);
     }
 
     @Override
@@ -114,50 +131,148 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<User> getAllUsers() {
-        List<User> userList = new ArrayList<>();
+    // In DatabaseHelper.java
+    public int validateLogin(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT * FROM " + TABLE_USERS;
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Query the database to validate the user credentials
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{COLUMN_PERSONAL_ID, COLUMN_PASSWORD},
+                COLUMN_EMAIL + "=?",
+                new String[]{email}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String storedPassword = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+            int userId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID));
+
+            if (storedPassword.equals(password)) {
+                cursor.close();
+                return userId;  // Return the userId if credentials match
+            } else {
+                cursor.close();
+                return -1;  // Invalid password
+            }
+        } else {
+            return -1;  // User not found
+        }
+    }
+
+    public void logAllUsers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, null, null, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int userId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID));
+                String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
+                String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
+                String email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+                String password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD));
+                String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE));
+                String dob = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB));
+
+                // Log each user to Logcat
+                Log.d("User Info", "ID: " + userId + ", Name: " + firstName + " " +
+                        lastName + ", Email: " + email + ", Password: " + password + ", Phone: "
+                        + phone + ", DOB: " + dob);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        } else {
+            Log.d("User Info", "No users found.");
+        }
+    }
+
+
+    public String getUserNameByPersonalId(int personalId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{COLUMN_FIRST_NAME, COLUMN_LAST_NAME},
+                COLUMN_PERSONAL_ID + "=?",
+                new String[]{String.valueOf(personalId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
+            String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
+            cursor.close();
+            return firstName + " " + lastName;  // Combine first and last name
+        } else {
+            return null; // User not found
+        }
+    }
+
+    public boolean deleteUser(int personalId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Use the personal_id to identify the row to delete
+        int rowsAffected = db.delete(TABLE_USERS, COLUMN_PERSONAL_ID + "=?", new String[]{String.valueOf(personalId)});
+
+        db.close();
+
+        // Return true if a row was deleted, false otherwise
+        return rowsAffected > 0;
+    }
+
+    // Other operations (update, delete) can also be added similarly
+
+
+
+
+
+
+    //review table functions
+    public long addReview(Review review) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("user_id", review.getUserId());
+        values.put("reviewer_id", review.getReviewerId());
+        values.put("review_text", review.getReviewText());
+        values.put("rating", review.getRating());
+        values.put("date", review.getDate());
+
+        long result = db.insert("reviews", null, values);
+        db.close();
+        return result; // Returns row ID or -1 if there's an error
+    }
+
+    public List<Review> getReviewsForUser(int userId) {
+        List<Review> reviews = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM reviews WHERE user_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    // Safely retrieve the column indexes
-                    int idIndex = cursor.getColumnIndex(COLUMN_ID);
-                    int emailIndex = cursor.getColumnIndex(COLUMN_EMAIL);
-                    int passwordIndex = cursor.getColumnIndex(COLUMN_PASSWORD);
-                    int firstNameIndex = cursor.getColumnIndex(COLUMN_FIRST_NAME);
-                    int lastNameIndex = cursor.getColumnIndex(COLUMN_LAST_NAME);
-                    int phoneIndex = cursor.getColumnIndex(COLUMN_PHONE);
-                    int dobIndex = cursor.getColumnIndex(COLUMN_DOB);
+                    int reviewIdIndex = cursor.getColumnIndex("review_id");
+                    int reviewerIdIndex = cursor.getColumnIndex("reviewer_id");
+                    int reviewTextIndex = cursor.getColumnIndex("review_text");
+                    int ratingIndex = cursor.getColumnIndex("rating");
+                    int dateIndex = cursor.getColumnIndex("date");
 
-                    // Check for valid column indices (they should be >= 0)
-                    if (idIndex != -1 && emailIndex != -1 && passwordIndex != -1 &&
-                            firstNameIndex != -1 && lastNameIndex != -1 && phoneIndex != -1 && dobIndex != -1) {
+                    if (reviewIdIndex != -1 && reviewerIdIndex != -1 &&
+                            reviewTextIndex != -1 && ratingIndex != -1 && dateIndex != -1) {
 
-                        // Retrieve values from the cursor safely
-                        String email = cursor.getString(emailIndex);
-                        String password = cursor.getString(passwordIndex);
-                        String firstName = cursor.getString(firstNameIndex);
-                        String lastName = cursor.getString(lastNameIndex);
-                        String phoneNumber = cursor.getString(phoneIndex);
-                        String dob = cursor.getString(dobIndex);
+                        int reviewId = cursor.getInt(reviewIdIndex);
+                        int reviewerId = cursor.getInt(reviewerIdIndex);
+                        String reviewText = cursor.getString(reviewTextIndex);
+                        int rating = cursor.getInt(ratingIndex);
+                        String date = cursor.getString(dateIndex);
 
-                        // Create a User object and add it to the list
-                        User user = new User(firstName, lastName, email, password, phoneNumber, dob);
-                        userList.add(user);
+                        Review review = new Review(userId, reviewerId, reviewText, rating, date);
+                        review.setReviewId(reviewId);
+                        reviews.add(review);
                     }
                 } while (cursor.moveToNext());
             }
         } finally {
-            cursor.close();  // Always close the cursor in a finally block
-            db.close();      // Close the database connection
+            if (cursor != null) cursor.close();
+            db.close();
         }
-
-        return userList;
+        return reviews;
     }
 
-    // Other operations (update, delete) can also be added similarly
 }

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blueLightest"
+    android:padding="16dp">
+
+    <!-- Container for Profile Picture and Name -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp">
+
+    <!-- Custom Profile Picture on the Left -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/pfp_shape"
+            android:src="@drawable/default_pfp"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true" />
+
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="120dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="start">
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Users Name"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black" />
+</LinearLayout>
+    </RelativeLayout>
+
+    <!-- Bio Section below the Name -->
+    <TextView
+        android:id="@+id/bioText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is a bio."
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:scrollbars="vertical" />
+
+    <!-- Divider Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Space for Fragment Switching -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- "Test" clickable text -->
+            <TextView
+                android:id="@+id/tabTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test"
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:textColor="@color/blueDark"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- "Reviews" clickable text -->
+            <TextView
+                android:id="@+id/tabReviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reviews"
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:textColor="@color/blueDark"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

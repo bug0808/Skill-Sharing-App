@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mainactivity.activities.HomeActivity;
+import com.example.mainactivity.activities.MainActivity;
 
 public class LoginFragment extends Fragment {
 
@@ -53,7 +54,7 @@ public class LoginFragment extends Fragment {
                     editor.apply();
 
                     // Start the HomeActivity
-                    Intent intent = new Intent(getActivity(), ProfileFragment.class); // Replace with your home activity
+                    Intent intent = new Intent(getActivity(), MainActivity.class); // Replace with your home activity
                     startActivity(intent);
                     getActivity().finish(); // Finish the login fragment or activity so user can't go back
                 } else {

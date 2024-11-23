@@ -1,0 +1,43 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/blueLightest">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingTop="20dp"
+        android:text="Tell us your skills!"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="@color/blueBase"/>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search skills" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/skillsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+    <Button
+        android:id="@+id/updateSkills"
+        style="@style/LoginButtonStyle"
+        android:layout_below="@id/skillsRecyclerView"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/blueBase"
+        android:text="Update Skills"
+        android:textColor="@color/blueLight" />
+
+</LinearLayout>

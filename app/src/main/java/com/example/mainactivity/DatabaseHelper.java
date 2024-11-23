@@ -15,10 +15,13 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private int lastAssignedId = 0;
     // Database and table information
     private static final String DATABASE_NAME = "userDatabase";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLE_USERS = "users";
+    private static final String TABLE_REVIEWS = "reviews";
+    private static final String TABLE_USER_SKILLS = "userSkills";
 
     // User Table Columns
     private static final String COLUMN_ID = "id";
@@ -29,6 +32,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LAST_NAME = "last_name";
     private static final String COLUMN_DOB = "date_of_birth";
     private static final String COLUMN_PERSONAL_ID = "personal_id";
+
+    // Review table columns
+    private static final String COLUMN_REVIEW_ID = "reviewId";
+    private static final String COLUMN_REVIEWER_ID = "reviewerId";
+    private static final String COLUMN_USER_ID = "userId";
+    private static final String COLUMN_REVIEW_TEXT = "review_text";
+    private static final String COLUMN_RATING = "rating";
+    private static final String COLUMN_REVIEW_DATE = "date";
+
+    private static final String COLUMN_SKILL = "skill";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -52,9 +65,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Create the reviews table
         String CREATE_REVIEWS_TABLE = "CREATE TABLE reviews (" +
-                "review_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "user_id INTEGER," +          // ID of the user being reviewed
-                "reviewer_id INTEGER," +      // ID of the user writing the review
+                "reviewId INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "userId INTEGER," +          // ID of the user being reviewed
+                "reviewerId INTEGER," +      // ID of the user writing the review
                 "review_text TEXT," +
                 "rating INTEGER," +
                 "date TEXT," +
@@ -62,12 +75,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (reviewer_id) REFERENCES users(id)" +
                 ")";
         db.execSQL(CREATE_REVIEWS_TABLE);
+
+        //create the skills table
+        String CREATE_SKILLS_TABLE = "CREATE TABLE userSkills (" +
+                "user_id INTEGER," +
+                "skill TEXT," +
+                "PRIMARY KEY(user_id, skill)," +  // Composite primary key
+                "FOREIGN KEY(user_id) REFERENCES users(id)" +
+                ")";
+        db.execSQL(CREATE_SKILLS_TABLE);
+
+        syncLastAssignedId(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS users");
+        db.execSQL("DROP TABLE IF EXISTS reviews");
+        db.execSQL("DROP TABLE IF EXISTS userSkills");
         onCreate(db);
     }
 
@@ -109,7 +134,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
             );
-            user.setPersonalId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID)));
             cursor.close();
             return user;
         } else {
@@ -117,19 +141,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean checkIfEmailExists(String email) {
-        SQLiteDatabase db = this.getReadableDatabase(); // Get a readable database
-        Cursor cursor = db.query(TABLE_USERS, null, COLUMN_EMAIL + "=?", new String[]{email},
-                null, null, null); // Query the database for the given email
-
+    public void syncLastAssignedId(SQLiteDatabase db) {
+        Cursor cursor = db.rawQuery("SELECT MAX(" + COLUMN_PERSONAL_ID + ") FROM " + TABLE_USERS, null);
         if (cursor != null && cursor.moveToFirst()) {
+            lastAssignedId = cursor.getInt(0); // Update lastAssignedId
             cursor.close();
-            return true; // Email exists
-        } else {
-            cursor.close();
-            return false; // Email does not exist
         }
     }
+
+    public boolean checkIfEmailExists(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID}, COLUMN_EMAIL + "=?",
+                new String[]{email}, null, null, null);
+
+        boolean exists = (cursor != null && cursor.moveToFirst());
+        if (cursor != null) cursor.close();
+        return exists;
+    }
+
 
     // In DatabaseHelper.java
     public int validateLogin(String email, String password) {
@@ -196,21 +225,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String firstName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME));
             String lastName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME));
             cursor.close();
-            return firstName + " " + lastName;  // Combine first and last name
+            return firstName + " " + lastName;
         } else {
-            return null; // User not found
+            return null;
         }
     }
 
     public boolean deleteUser(int personalId) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        // Use the personal_id to identify the row to delete
         int rowsAffected = db.delete(TABLE_USERS, COLUMN_PERSONAL_ID + "=?", new String[]{String.valueOf(personalId)});
-
         db.close();
-
-        // Return true if a row was deleted, false otherwise
         return rowsAffected > 0;
     }
 
@@ -226,13 +250,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("user_id", review.getUserId());
-        values.put("reviewer_id", review.getReviewerId());
-        values.put("review_text", review.getReviewText());
-        values.put("rating", review.getRating());
-        values.put("date", review.getDate());
+        values.put(COLUMN_USER_ID, review.getUserId());
+        values.put(COLUMN_REVIEWER_ID, review.getReviewerId());
+        values.put(COLUMN_REVIEW_TEXT, review.getReviewText());
+        values.put(COLUMN_RATING, review.getRating());
+        values.put(COLUMN_REVIEW_DATE, review.getDate());
 
-        long result = db.insert("reviews", null, values);
+        long result = db.insert(TABLE_REVIEWS, null, values);
         db.close();
         return result; // Returns row ID or -1 if there's an error
     }
@@ -247,11 +271,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    int reviewIdIndex = cursor.getColumnIndex("review_id");
-                    int reviewerIdIndex = cursor.getColumnIndex("reviewer_id");
-                    int reviewTextIndex = cursor.getColumnIndex("review_text");
-                    int ratingIndex = cursor.getColumnIndex("rating");
-                    int dateIndex = cursor.getColumnIndex("date");
+                    int reviewIdIndex = cursor.getColumnIndex(COLUMN_REVIEW_ID);
+                    int reviewerIdIndex = cursor.getColumnIndex(COLUMN_REVIEWER_ID);
+                    int reviewTextIndex = cursor.getColumnIndex(COLUMN_REVIEW_TEXT);
+                    int ratingIndex = cursor.getColumnIndex(COLUMN_RATING);
+                    int dateIndex = cursor.getColumnIndex(COLUMN_REVIEW_DATE);
 
                     if (reviewIdIndex != -1 && reviewerIdIndex != -1 &&
                             reviewTextIndex != -1 && ratingIndex != -1 && dateIndex != -1) {
@@ -274,5 +298,74 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return reviews;
     }
+
+
+    //skills table functions
+    public void insertUserSkills(SQLiteDatabase db, String userId, List<String> skills) {
+        for (String skill : skills) {
+            ContentValues values = new ContentValues();
+            values.put("user_id", userId);
+            values.put("skill", skill);
+            db.insertWithOnConflict("user_skills", null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
+    public List<String> getUserSkills(SQLiteDatabase db, String userId) {
+        List<String> skills = new ArrayList<>();
+        Cursor cursor = db.query("user_skills",
+                new String[]{"skill"},
+                "user_id = ?",
+                new String[]{userId},
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                skills.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return skills;
+    }
+
+    public void updateSkills(int userId, List<String> selectedSkills) {
+
+    }
+
+
+    public void logUserSkills(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Query to get skills for a specific user
+        String query = "SELECT " + COLUMN_SKILL + " FROM " + TABLE_USER_SKILLS + " WHERE user_id = ?";
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                List<String> skills = new ArrayList<>();
+
+                // Check if there are any skills for the user
+                do {
+                    // Get each skill from the cursor
+                    String skill = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SKILL));
+                    skills.add(skill);
+                } while (cursor.moveToNext());
+
+                // Log the user ID and the list of skills
+                Log.d("User Skills", "User ID: " + userId + ", Skills: " + skills);
+            } else {
+                // If cursor is null or no skills found
+                Log.d("User Skills", "No skills found for user ID: " + userId);
+            }
+        } catch (Exception e) {
+            Log.e("Database Error", "Error while querying user skills: ", e);
+        } finally {
+            if (cursor != null) cursor.close();
+            db.close();
+        }
+    }
+
+
 
 }

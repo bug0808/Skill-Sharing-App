@@ -24,6 +24,7 @@ public class WelcomeActivity extends AppCompatActivity {
         DatabaseHelper db = new DatabaseHelper(this);
         //db.deleteUser(0);
         db.logAllUsers(); // This will log the users to Logcat
+        db.logUserSkills(0);
         db.close();
 
         // Assuming you have a button for email connection

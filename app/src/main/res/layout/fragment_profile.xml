@@ -41,14 +41,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Users Name"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@android:color/black" />
 </LinearLayout>
     </RelativeLayout>
 
-    <!-- Bio Section below the Name -->
     <TextView
         android:id="@+id/bioText"
         android:layout_width="match_parent"
@@ -60,7 +58,6 @@
         android:padding="8dp"
         android:scrollbars="vertical" />
 
-    <!-- Divider Line -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -68,7 +65,6 @@
         android:layout_marginBottom="16dp"
         android:background="@android:color/darker_gray" />
 
-    <!-- Space for Fragment Switching -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
@@ -81,7 +77,6 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <!-- "Test" clickable text -->
             <TextView
                 android:id="@+id/tabTest"
                 android:layout_width="wrap_content"
@@ -95,7 +90,6 @@
                 android:clickable="true"
                 android:focusable="true" />
 
-            <!-- "Reviews" clickable text -->
             <TextView
                 android:id="@+id/tabReviews"
                 android:layout_width="wrap_content"

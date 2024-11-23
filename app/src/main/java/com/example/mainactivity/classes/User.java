@@ -10,7 +10,7 @@ public class User {
     private int personalId;
 
     //static variables
-    private static int lastAssignedId;
+    private static int lastAssignedId = 0;
 
     // Constructor
     public User(String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
@@ -25,6 +25,7 @@ public class User {
 
     // Method to generate a unique ID
     private int generatePersonalId(int lastId) {
+        lastId = lastId++;
         return (lastId++); // Generates a unique identifier
     }
 

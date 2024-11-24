@@ -1,7 +1,5 @@
 package com.example.mainactivity;
 
-import java.util.UUID;
-
 public class User {
     private String firstName;
     private String lastName;
@@ -11,8 +9,8 @@ public class User {
     private String password;
     private int personalId;
 
-    //static variables
-    private static int lastAssignedId;
+    // Static variable to hold the last assigned ID
+    private static int lastAssignedId = 0;
 
     // Constructor
     public User(String firstName, String lastName, String dateOfBirth, String email, String phone, String password) {
@@ -20,14 +18,15 @@ public class User {
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
         this.email = email;
-        this.personalId = generatePersonalId(lastAssignedId); // Assign a unique ID
         this.phone = phone;
         this.password = password;
+        this.personalId = generatePersonalId(); // Assign a unique ID
     }
 
-    // Method to generate a unique ID
-    private int generatePersonalId(int lastId) {
-        return (lastId++); // Generates a unique identifier
+    // Method to generate a unique personal ID
+    private int generatePersonalId() {
+        lastAssignedId++;  // Increment the static variable
+        return lastAssignedId;
     }
 
     // Getters
@@ -59,7 +58,6 @@ public class User {
         return password;
     }
 
-
     // Setters (if needed)
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -77,15 +75,20 @@ public class User {
         this.email = email;
     }
 
-    public void setPersonalId(int personalId) {
-        this.personalId = personalId;
-    }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setPersonalId(int personalId) {
+        this.personalId = personalId;
+    }
+
+    // Optional: Add method to reset the last assigned ID (useful if you want to reset it on app restart)
+    public static void resetLastAssignedId() {
+        lastAssignedId = 0;
     }
 }

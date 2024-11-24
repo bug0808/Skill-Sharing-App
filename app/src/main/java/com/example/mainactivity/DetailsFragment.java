@@ -1,6 +1,7 @@
 package com.example.mainactivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +79,8 @@ public class DetailsFragment extends Fragment {
             if (userId != -1) {
                 // User was inserted successfully
                 Toast.makeText(getContext(), "User registered successfully!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
             } else {
                 // Error occurred
                 Toast.makeText(getContext(), "Error registering user.", Toast.LENGTH_SHORT).show();

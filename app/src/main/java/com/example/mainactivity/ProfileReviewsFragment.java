@@ -64,7 +64,7 @@ public class ProfileReviewsFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ReviewActivity.class);
             startActivity(intent);
         });
-
+    
         return view;
     }
 }

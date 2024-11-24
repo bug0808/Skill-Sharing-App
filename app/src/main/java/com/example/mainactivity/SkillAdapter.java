@@ -83,7 +83,6 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.SkillViewHol
                 selectedSkills.add(skill);  // Preserve the selected skill if it's in the new list
             }
         }
-
         notifyDataSetChanged();  // Refresh the RecyclerView with the new data
     }
 }

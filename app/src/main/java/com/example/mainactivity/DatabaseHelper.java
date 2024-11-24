@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private int lastAssignedId = 0;
     // Database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "userSkills";
@@ -50,7 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create users table
-        // Create the users table
         String CREATE_USERS_TABLE = "CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "personal_id INTEGER," +
@@ -63,28 +62,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")";
         db.execSQL(CREATE_USERS_TABLE);
 
-        // Create the reviews table
+        // Create reviews table
         String CREATE_REVIEWS_TABLE = "CREATE TABLE reviews (" +
                 "reviewId INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "userId INTEGER," +          // ID of the user being reviewed
-                "reviewerId INTEGER," +      // ID of the user writing the review
+                "userId INTEGER," +
+                "reviewerId INTEGER," +
                 "review_text TEXT," +
                 "rating INTEGER," +
                 "date TEXT," +
-                "FOREIGN KEY (user_id) REFERENCES users(id)," +
-                "FOREIGN KEY (reviewer_id) REFERENCES users(id)" +
+                "FOREIGN KEY (userId) REFERENCES users(id)," +
+                "FOREIGN KEY (reviewerId) REFERENCES users(id)" +
                 ")";
         db.execSQL(CREATE_REVIEWS_TABLE);
 
-        //create the skills table
+        // Create userSkills table
         String CREATE_SKILLS_TABLE = "CREATE TABLE userSkills (" +
                 "user_id INTEGER," +
                 "skill TEXT," +
-                "PRIMARY KEY(user_id, skill)," +  // Composite primary key
+                "PRIMARY KEY(user_id, skill)," +
                 "FOREIGN KEY(user_id) REFERENCES users(id)" +
                 ")";
         db.execSQL(CREATE_SKILLS_TABLE);
-
         syncLastAssignedId(db);
     }
 
@@ -94,6 +92,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS reviews");
         db.execSQL("DROP TABLE IF EXISTS userSkills");
         onCreate(db);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        // Enable foreign key constraints
+        if (!db.isReadOnly()) {
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
     }
 
     // Insert a new user into the database
@@ -265,7 +272,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Review> reviews = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT * FROM reviews WHERE user_id = ?";
+        String query = "SELECT * FROM reviews WHERE userId = ?";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         try {
@@ -328,7 +335,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void updateSkills(int userId, List<String> selectedSkills) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        // Begin a transaction to ensure atomicity
+        db.beginTransaction();
+
+        try {
+            // First, remove existing skills for the user
+            db.delete(TABLE_USER_SKILLS, "user_id = ?", new String[]{String.valueOf(userId)});
+
+            // Now, insert the new list of selected skills
+            for (String skill : selectedSkills) {
+                ContentValues values = new ContentValues();
+                values.put("user_id", userId);
+                values.put("skill", skill);
+
+                // Insert or ignore in case the skill already exists
+                db.insertWithOnConflict(TABLE_USER_SKILLS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+
+            // Set the transaction as successful
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Database Error", "Error updating skills for user ID " + userId, e);
+        } finally {
+            // End the transaction
+            db.endTransaction();
+            db.close();
+        }
     }
 
 

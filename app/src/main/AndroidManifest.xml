@@ -24,7 +24,6 @@
             android:theme="@style/Theme.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,11 +37,21 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.MainActivity">
         </activity>
 
         <activity
             android:name=".activities.HomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+        <activity
+            android:name=".activities.BottomViewActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+        <activity
+            android:name=".activities.ProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>

@@ -6,8 +6,33 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- RecyclerView to display reviews -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" /> <!-- This ensures RecyclerView takes the remaining space -->
+
+    <!-- TextView to show when there are no reviews -->
+    <TextView
+        android:id="@+id/noReviewsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This user has no reviews!"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="@color/blueBase"
+        android:layout_gravity="center"/>
+
+    <!-- Write Review Button positioned at the bottom -->
+    <Button
+        android:id="@+id/writeReviewButton"
+        style="@style/LoginButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Write a review!"
+        android:textColor="@color/blueLight"
+        android:backgroundTint="@color/blueBase"
+        android:layout_marginTop="8dp"/>
+
 </LinearLayout>

@@ -15,6 +15,20 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.mainactivity.databinding.ActivityBottomViewBinding;
 
+import android.os.Bundle;
+import android.util.Log;
+
+import com.example.mainactivity.ui.dashboard.DashboardFragment;
+import com.example.mainactivity.ui.home.FirstFragment;
+import com.example.mainactivity.ui.notifications.NotificationsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.example.mainactivity.databinding.ActivityBottomViewBinding;
+
 public class BottomViewActivity extends AppCompatActivity {
 
     private ActivityBottomViewBinding binding;

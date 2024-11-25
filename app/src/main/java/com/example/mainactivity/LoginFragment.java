@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mainactivity.activities.BottomViewActivity;
 import com.example.mainactivity.activities.HomeActivity;
 import com.example.mainactivity.activities.MainActivity;
 import com.example.mainactivity.activities.ProfileActivity;
@@ -48,16 +49,11 @@ public class LoginFragment extends Fragment {
                 int userId = db.validateLogin(email, pass);  // Get the user ID
 
                 if (userId != -1) {
-                    // Login successful, proceed to the home page
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("userId", userId);  // Store the userId when logged in
-                    editor.apply();
-
-                    // Start the HomeActivity
-                    Intent intent = new Intent(getActivity(), ProfileActivity.class); // Replace with your home activity
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("userId", userId);
                     startActivity(intent);
-                    getActivity().finish(); // Finish the login fragment or activity so user can't go back
+                    getActivity().finish();
+
                 } else {
                     // Invalid login credentials
                     Toast.makeText(getActivity(), "Invalid email or password", Toast.LENGTH_SHORT).show();

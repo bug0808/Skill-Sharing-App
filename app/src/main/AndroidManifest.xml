@@ -5,6 +5,8 @@
 
     <application
         android:allowBackup="true"
+        android:theme="@style/Theme.MainActivity"
+        android:windowBackground="@color/blueLightest"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +18,7 @@
         <activity
             android:name=".activities.SkillPickActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light"/>
+            android:theme="@style/Theme.MainActivity"/>
 
         <activity
             android:name=".activities.WelcomeActivity"
@@ -31,7 +33,7 @@
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.MainActivity">
         </activity>
 
         <activity
@@ -43,17 +45,17 @@
         <activity
             android:name=".activities.HomeActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.MainActivity">
         </activity>
         <activity
             android:name=".activities.BottomViewActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.MainActivity">
         </activity>
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/Theme.MainActivity">
         </activity>
     </application>
 

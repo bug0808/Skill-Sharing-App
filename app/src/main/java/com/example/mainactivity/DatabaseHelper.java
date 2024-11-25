@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -179,26 +179,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Method to authenticate users based on email/phone and password
-    public boolean authenticateUser(String identifier, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // Query to check if the user exists with the given email/phone and password
-        String query = "SELECT * FROM " + TABLE_USERS + " WHERE (" + COLUMN_EMAIL + "=? OR " + COLUMN_PHONE + "=?) AND " + COLUMN_PASSWORD + "=?";
-        Cursor cursor = db.rawQuery(query, new String[]{identifier, identifier, password});
-
-        boolean isAuthenticated = false;
-
-        if (cursor != null && cursor.moveToFirst()) {
-            isAuthenticated = true; // User found
-        }
-
-        if (cursor != null) {
-            cursor.close(); // Close the cursor
-        }
-        db.close(); // Close the database
-        return isAuthenticated;
+    public boolean authenticateUser(String email, String password) {
+        SQLiteDatabase MyDatabase = this.getReadableDatabase(); // Use readable database
+            Cursor cursor = null;
+            try {
+                cursor = MyDatabase.rawQuery("SELECT * FROM users WHERE email = ? AND password = ?", new String[]{email, password});
+                return cursor.getCount() > 0; // Return true if the query returns any rows
+            } finally {
+                if (cursor != null) {
+                    cursor.close(); // Ensure the cursor is always closed to prevent memory leaks
+                }
+                MyDatabase.close(); // Close the database after use
+            }
     }
-        // Other operations (update, delete) can also be added similarly
 
+        // Other operations (update, delete) can also be added similarly
     //review table functions
 }

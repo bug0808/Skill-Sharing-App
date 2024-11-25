@@ -2,6 +2,7 @@ package com.example.mainactivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +33,11 @@ public class LoginFragment extends Fragment {
 
             // Add your login logic here
                     // Validate input fields
+            Log.d("Login", email +" "+ pass);
                     if (validateInput(email, pass)) {
                         // Check login credentials (mock logic)
                         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+                        Log.d("Login", email +" "+ pass);
                         if (dbHelper.authenticateUser(email, pass)) {
                             // Navigate to MainActivity on successful login
                             Intent intent = new Intent(getActivity(), MainActivity.class);

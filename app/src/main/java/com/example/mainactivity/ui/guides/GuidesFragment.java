@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.Guide;
-import com.example.mainactivity.GuidesAdapter;
 import com.example.mainactivity.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -59,7 +58,6 @@ public class GuidesFragment extends Fragment {
         return view;
     }
 
-    // Updated showAddGuideDialog
     private void showAddGuideDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Add Guide");
@@ -69,17 +67,20 @@ public class GuidesFragment extends Fragment {
 
         EditText inputTitle = dialogView.findViewById(R.id.input_title);
         EditText inputDescription = dialogView.findViewById(R.id.input_description);
+        EditText inputContent = dialogView.findViewById(R.id.input_content); // New input for full content
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             String title = inputTitle.getText().toString();
             String description = inputDescription.getText().toString();
+            String content = inputContent.getText().toString();
 
-            if (!title.isEmpty() && !description.isEmpty()) {
-                guidesViewModel.addGuide(new Guide(title, description));
+            if (!title.isEmpty() && !description.isEmpty() && !content.isEmpty()) {
+                guidesViewModel.addGuide(new Guide(title, description, content));
             }
         });
 
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
+
 }

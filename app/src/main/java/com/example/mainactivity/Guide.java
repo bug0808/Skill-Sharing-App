@@ -3,14 +3,14 @@ package com.example.mainactivity;
 public class Guide {
     private String title;
     private String description;
+    private String content;
 
-    // Constructor
-    public Guide(String title, String description) {
+    public Guide(String title, String description, String content) {
         this.title = title;
         this.description = description;
+        this.content = content;
     }
 
-    // Getters
     public String getTitle() {
         return title;
     }
@@ -19,12 +19,7 @@ public class Guide {
         return description;
     }
 
-    // Setters (optional, if you plan to modify the fields)
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public String getContent() {
+        return content;
     }
 }

@@ -62,6 +62,8 @@ public class ProfileReviewsFragment extends Fragment {
 
         reviewButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReviewActivity.class);
+            intent.putExtra("userId", userId);
+            //intent.putExtra("userIdToReview", userIdToReview);
             startActivity(intent);
         });
     

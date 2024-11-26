@@ -25,26 +25,23 @@ public class ReviewActivity extends AppCompatActivity {
     private ImageView star1, star2, star3, star4, star5;
     private EditText reviewEditText;
     private Button submitButton, cancelButton;
-    private int rating = 0; // This will store the selected rating out of 5
+    private int rating = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
 
-        // Initialize the ImageViews for stars
         star1 = findViewById(R.id.star1);
         star2 = findViewById(R.id.star2);
         star3 = findViewById(R.id.star3);
         star4 = findViewById(R.id.star4);
         star5 = findViewById(R.id.star5);
 
-        //initialize edit text
         reviewEditText = findViewById(R.id.edittextReview);
         submitButton = findViewById(R.id.submitButton);
         cancelButton = findViewById(R.id.cancelButton);
 
-        // Set up listeners for each star to set the rating
         View.OnClickListener starClickListener = view -> {
             if (view.getId() == R.id.star1) {
                 rating = 1;
@@ -60,22 +57,17 @@ public class ReviewActivity extends AppCompatActivity {
             updateStarImages();
         };
 
-        // Assign the listener to each star image
         star1.setOnClickListener(starClickListener);
         star2.setOnClickListener(starClickListener);
         star3.setOnClickListener(starClickListener);
         star4.setOnClickListener(starClickListener);
         star5.setOnClickListener(starClickListener);
 
-        // Set submit button to get review
         submitButton.setOnClickListener(view -> submitReview());
-
-        // Set up cancel button
         cancelButton.setOnClickListener(view -> finish());
     }
 
     private void updateStarImages() {
-        // Update star images based on rating
         star1.setImageResource(rating >= 1 ? R.drawable.starfilled : R.drawable.starhollow);
         star2.setImageResource(rating >= 2 ? R.drawable.starfilled : R.drawable.starhollow);
         star3.setImageResource(rating >= 3 ? R.drawable.starfilled : R.drawable.starhollow);
@@ -95,41 +87,31 @@ public class ReviewActivity extends AppCompatActivity {
             return;
         }
 
-        // Retrieve logged-in user's ID from SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        int loggedInUserId = sharedPreferences.getInt("userId", -1);  // Get logged-in user's ID
-
-        // Get the user ID of the person being reviewed (passed from another activity)
-        int userIdToReview = getIntent().getIntExtra("userIdToReview", -1);  // Get ID of user being reviewed
+        int loggedInUserId = sharedPreferences.getInt("userId", -1);
+        int userIdToReview = getIntent().getIntExtra("userIdToReview", -1);
 
         if (loggedInUserId == -1 || userIdToReview == -1) {
             Toast.makeText(this, "Error: Invalid user IDs", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create a new Review object
         Review review = new Review(userIdToReview, loggedInUserId, reviewText, rating, getCurrentDate());
 
-        // Save the review to the database
         long result = db.addReview(review);
         db.close();
 
         if (result != -1) {
-            // Review successfully inserted into the database
             Toast.makeText(this, "Review submitted with " + rating + " stars", Toast.LENGTH_SHORT).show();
         } else {
-            // Handle error in inserting review
             Toast.makeText(this, "Error submitting review", Toast.LENGTH_SHORT).show();
         }
 
-        // Reset review input fields
         rating = 0;
         updateStarImages();
-        reviewEditText.setText(""); // Clear the review text
+        reviewEditText.setText("");
     }
 
-
-    // Helper method to get current date in a standard format
     private String getCurrentDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(new Date());

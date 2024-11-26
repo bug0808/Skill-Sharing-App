@@ -17,33 +17,25 @@ public class SignUpFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
-        // Initialize UI components
         EditText signupEmail = view.findViewById(R.id.signup_email);
         EditText signupPassword = view.findViewById(R.id.signup_password);
         EditText signupConfirmPassword = view.findViewById(R.id.signup_confirm_password);
         Button signupButton = view.findViewById(R.id.signupButton);
 
-        // Set click listener for signup button
         signupButton.setOnClickListener(v -> {
             String email = signupEmail.getText().toString().trim();
             String password = signupPassword.getText().toString();
             String confirmPassword = signupConfirmPassword.getText().toString();
 
-            // Validate input fields
             if (validateInput(email, password, confirmPassword)) {
-                // Check if email already exists in the database
                 DatabaseHelper db = new DatabaseHelper(getContext());
                 if (db.checkIfEmailExists(email)) {
-                    // If email exists, show error message
                     Toast.makeText(getContext(), "Email already registered", Toast.LENGTH_SHORT).show();
                 } else {
-                    // If email is available, create a new instance of DetailsFragment
                     DetailsFragment detailsFragment = new DetailsFragment();
 
-                    // Pass email data to DetailsFragment
                     Bundle bundle = new Bundle();
                     bundle.putString("email", email);
                     bundle.putString("password", password);
@@ -60,7 +52,6 @@ public class SignUpFragment extends Fragment {
         return view;
     }
 
-    // Method to validate input fields
     private boolean validateInput(String email, String password, String confirmPassword) {
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(getActivity(), "Please enter a valid email", Toast.LENGTH_SHORT).show();

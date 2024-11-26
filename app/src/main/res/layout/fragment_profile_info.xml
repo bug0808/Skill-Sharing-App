@@ -1,14 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ProfileInfoFragment">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/skills_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Names Skills"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:padding="30dp" />
 
-</FrameLayout>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/skills_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:padding="8dp">
+        </GridLayout>
+    </HorizontalScrollView>
+    <Button
+        android:id="@+id/updateSkillsButton"
+        style="@style/BubbleEditText"
+        android:backgroundTint="@color/blueBase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Skills"
+        android:textColor="@color/blueLightest"/>
+</LinearLayout>

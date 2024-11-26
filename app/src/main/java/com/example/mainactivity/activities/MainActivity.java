@@ -17,6 +17,7 @@ import com.example.mainactivity.ProfileFragment;
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMainBinding;
 import com.example.mainactivity.ui.dashboard.DashboardFragment;
+import com.example.mainactivity.ui.guides.GuidesFragment;
 import com.example.mainactivity.ui.home.FirstFragment;
 import com.example.mainactivity.ui.notifications.NotificationsFragment;
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(new FirstFragment());
                     break;
                 case R.id.navigation_dashboard:
-                    replaceFragment(new DashboardFragment());
+                    replaceFragment(new GuidesFragment());
                     break;
                 case R.id.navigation_notifications:
                     replaceFragment(new NotificationsFragment());

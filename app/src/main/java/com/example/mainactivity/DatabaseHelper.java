@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.mainactivity.classes.Guide;
 import com.example.mainactivity.classes.Review;
 import com.example.mainactivity.classes.User;
 
@@ -16,14 +17,15 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private int lastAssignedId = 0;
-    // Database and table information
+    // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
-    private static final String TABLE_USER_SKILLS = "userSkills";
+    private static final String TABLE_USER_SKILLS = "user_skills";
+    private static final String TABLE_GUIDES = "guides";
 
-    // User Table Columns
+    // user Table Columns
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_PHONE = "phone";
     private static final String COLUMN_EMAIL = "email";
@@ -33,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_DOB = "date_of_birth";
     private static final String COLUMN_PERSONAL_ID = "personal_id";
 
-    // Review table columns
+    // review table columns
     private static final String COLUMN_REVIEW_ID = "reviewId";
     private static final String COLUMN_REVIEWER_ID = "reviewerId";
     private static final String COLUMN_USER_ID = "userId";
@@ -41,7 +43,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_RATING = "rating";
     private static final String COLUMN_REVIEW_DATE = "date";
 
+    //skills
     private static final String COLUMN_SKILL = "skill";
+
+    // guides
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_DESCRIPTION = "description";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,8 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create users table
-        String CREATE_USERS_TABLE = "CREATE TABLE users (" +
+    //user table
+    String CREATE_USERS_TABLE = "CREATE TABLE users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "personal_id INTEGER," +
                 "phone TEXT," +
@@ -62,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")";
         db.execSQL(CREATE_USERS_TABLE);
 
-        // Create reviews table
+        // reviews table
         String CREATE_REVIEWS_TABLE = "CREATE TABLE reviews (" +
                 "reviewId INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "userId INTEGER," +
@@ -70,40 +77,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "review_text TEXT," +
                 "rating INTEGER," +
                 "date TEXT," +
-                "FOREIGN KEY (userId) REFERENCES users(id)," +
-                "FOREIGN KEY (reviewerId) REFERENCES users(id)" +
+                "FOREIGN KEY (userId) REFERENCES users(personal_id)," +
+                "FOREIGN KEY (reviewerId) REFERENCES users(personal_id)" +
                 ")";
         db.execSQL(CREATE_REVIEWS_TABLE);
 
-        // Create userSkills table
-        String CREATE_SKILLS_TABLE = "CREATE TABLE userSkills (" +
+        // skills table
+        String CREATE_SKILLS_TABLE = "CREATE TABLE user_skills (" +
                 "user_id INTEGER," +
                 "skill TEXT," +
                 "PRIMARY KEY(user_id, skill)," +
-                "FOREIGN KEY(user_id) REFERENCES users(id)" +
+                "FOREIGN KEY(user_id) REFERENCES users(personal_id) ON DELETE CASCADE" +
                 ")";
         db.execSQL(CREATE_SKILLS_TABLE);
-        syncLastAssignedId(db);
+
+        String CREATE_GUIDES_TABLE = "CREATE TABLE " + TABLE_GUIDES + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_TITLE + " TEXT, "
+                + COLUMN_DESCRIPTION + " TEXT"
+                + ")";
+        db.execSQL(CREATE_GUIDES_TABLE);
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS users");
         db.execSQL("DROP TABLE IF EXISTS reviews");
-        db.execSQL("DROP TABLE IF EXISTS userSkills");
+        db.execSQL("DROP TABLE IF EXISTS user_skills");
+        db.execSQL("DROP TABLE IF EXISTS guides");
         onCreate(db);
     }
 
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
-        // Enable foreign key constraints
         if (!db.isReadOnly()) {
             db.execSQL("PRAGMA foreign_keys=ON;");
         }
     }
 
-    // Insert a new user into the database
+    //new user in db
     public long addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -116,13 +135,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_LAST_NAME, user.getLastName());
         values.put(COLUMN_DOB, user.getDateOfBirth());
 
-        // Insert the row
         long result = db.insert(TABLE_USERS, null, values);
         db.close();
-        return result; // returns the row ID or -1 if there's an error
+        return result;
     }
 
-    // Retrieve a user by their personal ID
+    public int updateUser(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PHONE, user.getPhone());
+        values.put(COLUMN_EMAIL, user.getEmail());
+        values.put(COLUMN_PASSWORD, user.getPassword());
+        values.put(COLUMN_FIRST_NAME, user.getFirstName());
+        values.put(COLUMN_LAST_NAME, user.getLastName());
+        values.put(COLUMN_DOB, user.getDateOfBirth());
+
+        return db.update(TABLE_USERS, values, COLUMN_PERSONAL_ID + " = ?",
+                new String[]{String.valueOf(user.getPersonalId())});
+    }
+
+    public List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, null, null, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                User user = new User(
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
+                );
+                users.add(user);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return users;
+    }
+
+    // get user by their id
     public User getUserByPersonalId(int personalId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -144,15 +198,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             return user;
         } else {
-            return null; // User not found
-        }
-    }
-
-    public void syncLastAssignedId(SQLiteDatabase db) {
-        Cursor cursor = db.rawQuery("SELECT MAX(" + COLUMN_PERSONAL_ID + ") FROM " + TABLE_USERS, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            lastAssignedId = cursor.getInt(0); // Update lastAssignedId
-            cursor.close();
+            return null;
         }
     }
 
@@ -167,11 +213,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    // In DatabaseHelper.java
+    // checking login logic
     public int validateLogin(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // Query the database to validate the user credentials
         Cursor cursor = db.query(TABLE_USERS,
                 new String[]{COLUMN_PERSONAL_ID, COLUMN_PASSWORD},
                 COLUMN_EMAIL + "=?",
@@ -183,16 +228,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             if (storedPassword.equals(password)) {
                 cursor.close();
-                return userId;  // Return the userId if credentials match
+                return userId;
             } else {
                 cursor.close();
-                return -1;  // Invalid password
+                return -1;
             }
         } else {
-            return -1;  // User not found
+            return -1;
         }
     }
 
+    //logging method for testing/debug
     public void logAllUsers() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, null, null, null, null, null, null);
@@ -207,7 +253,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE));
                 String dob = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB));
 
-                // Log each user to Logcat
                 Log.d("User Info", "ID: " + userId + ", Name: " + firstName + " " +
                         lastName + ", Email: " + email + ", Password: " + password + ", Phone: "
                         + phone + ", DOB: " + dob);
@@ -219,7 +264,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-
+    //getting name by persons id
     public String getUserNameByPersonalId(int personalId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -238,6 +283,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<Integer> getUserIdsByFirstName(String firstName) {
+        List<Integer> userIds = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT id, first_name, last_name FROM users WHERE first_name LIKE ? ORDER BY last_name ASC";
+        Cursor cursor = db.rawQuery(query, new String[]{firstName});
+
+        if (cursor.moveToFirst()) {
+            do {
+                int userId = cursor.getInt(cursor.getColumnIndexOrThrow("personal_id"));
+                userIds.add(userId);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return userIds;
+    }
+
+    //deleting a user from db (for testing)
     public boolean deleteUser(int personalId) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rowsAffected = db.delete(TABLE_USERS, COLUMN_PERSONAL_ID + "=?", new String[]{String.valueOf(personalId)});
@@ -245,7 +309,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsAffected > 0;
     }
 
-    // Other operations (update, delete) can also be added similarly
+
 
 
 
@@ -265,9 +329,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_REVIEWS, null, values);
         db.close();
-        return result; // Returns row ID or -1 if there's an error
+        return result;
     }
 
+    public boolean deleteReview(int reviewId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete(TABLE_REVIEWS, COLUMN_REVIEW_ID + " = ?",
+                new String[]{String.valueOf(reviewId)});
+        db.close();
+        return rowsAffected > 0;
+    }
+
+    // get reviews given userid
     public List<Review> getReviewsForUser(int userId) {
         List<Review> reviews = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -317,79 +390,69 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<String> getUserSkills(SQLiteDatabase db, String userId) {
+    // get skills given id
+    public List<String> getUserSkills(SQLiteDatabase db, int userId) {
         List<String> skills = new ArrayList<>();
+        String userIdString = String.valueOf(userId);
+
         Cursor cursor = db.query("user_skills",
                 new String[]{"skill"},
                 "user_id = ?",
-                new String[]{userId},
+                new String[]{userIdString},
                 null, null, null);
 
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                skills.add(cursor.getString(0));
+                skills.add(cursor.getString(cursor.getColumnIndexOrThrow("skill")));
             } while (cursor.moveToNext());
+            cursor.close();
         }
-        cursor.close();
         return skills;
     }
 
+
+    // update users skills
     public void updateSkills(int userId, List<String> selectedSkills) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // Begin a transaction to ensure atomicity
         db.beginTransaction();
 
         try {
-            // First, remove existing skills for the user
             db.delete(TABLE_USER_SKILLS, "user_id = ?", new String[]{String.valueOf(userId)});
 
-            // Now, insert the new list of selected skills
+            ContentValues values = new ContentValues();
             for (String skill : selectedSkills) {
-                ContentValues values = new ContentValues();
+                values.clear();
                 values.put("user_id", userId);
                 values.put("skill", skill);
-
-                // Insert or ignore in case the skill already exists
-                db.insertWithOnConflict(TABLE_USER_SKILLS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                db.insert(TABLE_USER_SKILLS, null, values);
             }
-
-            // Set the transaction as successful
             db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.e("Database Error", "Error updating skills for user ID " + userId, e);
         } finally {
-            // End the transaction
             db.endTransaction();
             db.close();
         }
     }
 
 
+    //skill logging for testing
     public void logUserSkills(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // Query to get skills for a specific user
         String query = "SELECT " + COLUMN_SKILL + " FROM " + TABLE_USER_SKILLS + " WHERE user_id = ?";
         Cursor cursor = null;
 
         try {
             cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
-
             if (cursor != null && cursor.moveToFirst()) {
                 List<String> skills = new ArrayList<>();
-
-                // Check if there are any skills for the user
                 do {
-                    // Get each skill from the cursor
                     String skill = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SKILL));
                     skills.add(skill);
                 } while (cursor.moveToNext());
 
-                // Log the user ID and the list of skills
                 Log.d("User Skills", "User ID: " + userId + ", Skills: " + skills);
             } else {
-                // If cursor is null or no skills found
                 Log.d("User Skills", "No skills found for user ID: " + userId);
             }
         } catch (Exception e) {
@@ -400,6 +463,80 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //guide functions
+    // insert a new guide
+    public long addGuide(Guide guide) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, guide.getTitle());
+        values.put(COLUMN_DESCRIPTION, guide.getDescription());
 
+        long id = db.insert(TABLE_GUIDES, null, values);
+        db.close();
+        return id;
+    }
+
+    //get a guide by ID
+    public Guide getGuide(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_GUIDES,
+                new String[] { COLUMN_ID, COLUMN_TITLE, COLUMN_DESCRIPTION },
+                COLUMN_ID + "=?", new String[] { String.valueOf(id) },
+                null, null, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Guide guide = new Guide(
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION))
+            );
+            cursor.close();
+            return guide;
+        } else {
+            return null;
+        }
+    }
+
+    //update a guide
+    public int updateGuide(Guide guide, int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, guide.getTitle());
+        values.put(COLUMN_DESCRIPTION, guide.getDescription());
+
+        return db.update(TABLE_GUIDES, values, COLUMN_ID + "=?", new String[] { String.valueOf(id) });
+    }
+
+    //delete a guide by ID
+    public void deleteGuide(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_GUIDES, COLUMN_ID + "=?", new String[] { String.valueOf(id) });
+        db.close();
+    }
+
+    //get all guides
+    public List<Guide> getAllGuides() {
+        List<Guide> guideList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_GUIDES, null, null, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION));
+
+                Guide guide = new Guide(title, description);
+
+                guideList.add(guide);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        db.close();
+        return guideList;
+    }
 }

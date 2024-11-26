@@ -3,6 +3,7 @@ package com.example.mainactivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,70 +46,72 @@ public class DetailsFragment extends Fragment {
         emailTextView = view.findViewById(R.id.details_email);
         signUpButton = view.findViewById(R.id.signupButton);
 
-        // Retrieve email and password from arguments (from SignUpFragment)
-        final String email = getArguments() != null ? getArguments().getString("email") : "";
-        final String password = getArguments() != null ? getArguments().getString("password") : "";
+        Bundle args = getArguments();
+        String email = null;
+        String password = null;
 
-        emailTextView.setText(email);
+        if (args != null && args.containsKey("email") && args.containsKey("password")) {
+            email = args.getString("email", "");
+            password = args.getString("password", "");
+            emailTextView.setText(email);
+        } else {
+            Toast.makeText(requireContext(), "Error: Missing email or password.", Toast.LENGTH_SHORT).show();
+            requireActivity().onBackPressed();
+            return view;
+        }
 
-        // Set the "Change Email?" text clickable
         TextView changeEmailTextView = view.findViewById(R.id.change_email_text);
         changeEmailTextView.setOnClickListener(v -> {
-
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new SignUpFragment())
-                    .addToBackStack(null)  // Optional: Add back stack if you want to navigate back
-                    .commit();
+            if (isAdded()) {
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new SignUpFragment())
+                        .addToBackStack(null)
+                        .commit();
+            }
         });
 
-
         dobEditText.setOnClickListener(v -> showDatePickerDialog());
+
+        String finalEmail = email;
+        String finalPassword = password;
+
         signUpButton.setOnClickListener(v -> {
             String firstName = firstNameEditText.getText().toString();
             String lastName = lastNameEditText.getText().toString();
             String phoneNumber = phoneEditText.getText().toString();
-            String dob = dobEditText.getText().toString();  // Get password entered
+            String dob = dobEditText.getText().toString();
 
-            if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || dob.isEmpty()) {
-                // Show a message to the user if any field is empty
-                Toast.makeText(getContext(), "Please fill all fields.", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(firstName) || TextUtils.isEmpty(lastName) ||
+                    TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(dob)) {
+                Toast.makeText(requireContext(), "All fields are required.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            User newUser = new User(firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
+
+            DatabaseHelper dbHelper = new DatabaseHelper(requireContext());
+            long userId = dbHelper.addUser(newUser);
+            dbHelper.close();
+
+            if (userId != -1) {
+                Toast.makeText(requireContext(), "User registered successfully!", Toast.LENGTH_SHORT).show();
+                Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
+                skillPickIntent.putExtra("USER_ID", userId);
+                skillPickIntent.putExtra("IS_NEW", true);
+                startActivity(skillPickIntent);
+                requireActivity().finish();
             } else {
-
-                User newUser = new User(firstName, lastName, email, password, phoneNumber, dob);
-
-                DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-                long userId = dbHelper.addUser(newUser);
-                dbHelper.close();
-
-                // Optionally, handle success (e.g., navigate to the next screen or show a confirmation)
-                if (userId != -1) {
-                    // User was inserted successfully
-                    Toast.makeText(getContext(), "User registered successfully!", Toast.LENGTH_SHORT).show();
-
-                    // Start the SkillPickActivity
-                    Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
-                    skillPickIntent.putExtra("USER_ID", userId);
-                    startActivity(skillPickIntent);
-                    // Close the parent activity
-                    requireActivity().finish();
-
-                } else {
-                    // Error occurred
-                    Toast.makeText(getContext(), "Error registering user.", Toast.LENGTH_SHORT).show();
-
-                    // Navigate back to the WelcomeActivity
-                    Intent welcomeIntent = new Intent(requireActivity(), WelcomeActivity.class);
-                    startActivity(welcomeIntent);
-                    // Close the parent activity
-                    requireActivity().finish();
-                }
+                Toast.makeText(requireContext(), "Error registering user.", Toast.LENGTH_SHORT).show();
+                Intent welcomeIntent = new Intent(requireActivity(), WelcomeActivity.class);
+                startActivity(welcomeIntent);
+                requireActivity().finish();
             }
         });
 
         return view;
     }
 
-    // Method to show DatePicker Dialog
+
     private void showDatePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
 

@@ -38,18 +38,17 @@ public class SkillPickActivity extends AppCompatActivity {
         setContentView(R.layout.activity_skill_pick);
 
         int userId = getIntent().getIntExtra("USER_ID", -1);
+        boolean IS_NEW = getIntent().getBooleanExtra("IS_NEW",false);
+
         SearchView searchView = findViewById(R.id.searchView);
         RecyclerView recyclerView = findViewById(R.id.skillsRecyclerView);
 
-        // Load skills
         List<String> skills = loadSkills(this);
 
-        // Initialize adapter with first 20 skills
         adapter = new SkillAdapter(skills.subList(0, Math.min(20, skills.size())));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Search functionality
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -62,23 +61,17 @@ public class SkillPickActivity extends AppCompatActivity {
                         .filter(skill -> skill.toLowerCase().contains(newText.toLowerCase()))
                         .collect(Collectors.toList());
 
-                // Update the existing adapter's data instead of creating a new adapter
                 adapter.updateSkills(filteredSkills);
                 return true;
             }
         });
 
         db = new DatabaseHelper(this);
-
-        // Find the button by ID
         Button updateSkillsButton = findViewById(R.id.updateSkills);
 
-        // Set the button's click listener
         updateSkillsButton.setOnClickListener(v -> {
-            // Get the list of selected skills
             List<String> selectedSkills = adapter.getSelectedSkills();
 
-            // Call your updateSkills function to store the selected skills
             db.updateSkills(userId, selectedSkills);
 
             Intent main = new Intent(this, MainActivity.class);
@@ -94,25 +87,20 @@ public class SkillPickActivity extends AppCompatActivity {
                 new InputStreamReader(context.getAssets().open("skills.csv")))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // Remove all double quotes and trim leading/trailing spaces
                 line = line.replace("\"", "").trim();
 
-                // Skip empty lines after trimming
+
                 if (line.isEmpty()) {
                     continue;
                 }
-
-                // Check if the skill starts with a letter
                 if (!line.isEmpty() && Character.isLetter(line.charAt(0))) {
-                    // Add the skill to the list if it's not empty and starts with a letter
                     skills.add(line);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle exceptions
+            e.printStackTrace();
         }
 
-        // Sort the skills alphabetically
         Collections.sort(skills);
         return skills;
     }

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/blueLightest">
+
+    <!-- Container for Change Email and Email -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        android:layout_marginBottom="16dp">
+
+        <!-- Change Email text at the top-left -->
+        <TextView
+            android:id="@+id/change_email_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change Email?"
+            android:textColor="@color/blueDark"
+            android:textSize="14sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Email Display text -->
+        <TextView
+            android:id="@+id/details_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email Address"
+            android:textSize="20sp"
+            android:textColor="@color/blueDark"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- Profile Details Header -->
+    <TextView
+        android:id="@+id/profile_details_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Profile Details"
+        android:textSize="16sp"
+        android:textColor="@color/blueDark"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Profile details input fields (e.g., First Name, Last Name, etc.) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/signup_firstName"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="First Name"
+            android:inputType="textPersonName"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/signup_lastName"
+            style="@style/DetailsEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Last Name"
+            android:inputType="textPersonName"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- Phone number field -->
+    <EditText
+        android:id="@+id/signupPhone"
+        style="@style/DetailsEditText"
+        android:layout_width="match_parent"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Date of birth field -->
+    <EditText
+        android:id="@+id/signup_dob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:focusable="false"
+        android:hint="Date of Birth"
+        android:inputType="none" />
+
+    <Button
+        android:id="@+id/signupButton"
+        style="@style/LoginButtonStyle"
+        android:text="Sign Up"
+        android:textColor="@color/blueLightest"
+        android:backgroundTint="@color/blueDark"
+        android:layout_marginTop="24dp" />
+</LinearLayout>

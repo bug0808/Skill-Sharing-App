@@ -56,4 +56,6 @@
     <string name="title_dashboard">dashboard\n</string>
     <string name="title_notifications">notifications\n</string>
     <string name="title_profile">Profile</string>
+    <string name="add_guide">Add Guide</string>
+    <string name="title_guides">Guides</string>
 </resources>

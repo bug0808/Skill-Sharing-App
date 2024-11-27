@@ -1,5 +1,6 @@
 package com.example.mainactivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.mainactivity.activities.UpdateDetailsActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ProfileFragment extends Fragment {
 
     private TextView infoTab, reviewsTab, usernameTextView;
+    private FloatingActionButton fab;
     private int userId;
 
     @Nullable
@@ -30,9 +35,16 @@ public class ProfileFragment extends Fragment {
 
         infoTab = view.findViewById(R.id.tabInfo);
         reviewsTab = view.findViewById(R.id.tabReviews);
+        fab = view.findViewById(R.id.fab);
 
         infoTab.setOnClickListener(v -> showFragment(new ProfileInfoFragment()));
         reviewsTab.setOnClickListener(v -> showFragment(new ProfileReviewsFragment()));
+
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), UpdateDetailsActivity.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        });
 
         if (savedInstanceState == null) {
             showFragment(new ProfileInfoFragment());
@@ -42,9 +54,9 @@ public class ProfileFragment extends Fragment {
 
     private void fetchUserName(int userId) {
         DatabaseHelper db = new DatabaseHelper(getContext());
-        String username = db.getUserNameByPersonalId(userId); // Use your method to fetch the username
+        String username = db.getUserNameByPersonalId(userId);
         if (username != null) {
-            usernameTextView.setText(username); // Display the username
+            usernameTextView.setText(username);
         }
     }
 

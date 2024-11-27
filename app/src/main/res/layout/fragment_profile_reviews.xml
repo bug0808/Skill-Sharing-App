@@ -6,14 +6,12 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- RecyclerView to display reviews -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" /> <!-- This ensures RecyclerView takes the remaining space -->
+        android:layout_weight="1" />
 
-    <!-- TextView to show when there are no reviews -->
     <TextView
         android:id="@+id/noReviewsTextView"
         android:layout_width="wrap_content"
@@ -24,7 +22,6 @@
         android:textColor="@color/blueBase"
         android:layout_gravity="center"/>
 
-    <!-- Write Review Button positioned at the bottom -->
     <Button
         android:id="@+id/writeReviewButton"
         style="@style/LoginButtonStyle"

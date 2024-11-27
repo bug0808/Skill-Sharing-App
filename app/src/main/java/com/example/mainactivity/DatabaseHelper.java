@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -163,6 +163,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(user.getPersonalId())});
     }
 
+    public boolean updateUserDetails(int userId, String firstName, String lastName, String email, String phone, String dob) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("first_name", firstName);
+        values.put("last_name", lastName);
+        values.put("email", email);
+        values.put("phone", phone);
+        values.put("date_of_birth", dob);
+
+        int rowsAffected = db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
+        return rowsAffected > 0;
+    }
+
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -199,9 +212,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             User user = new User(
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
             );
             cursor.close();

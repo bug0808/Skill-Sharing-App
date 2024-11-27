@@ -26,15 +26,14 @@
             android:padding="8dp">
         </GridLayout>
     </HorizontalScrollView>
+
     <Button
         android:id="@+id/updateSkillsButton"
-        style="@style/LoginSignupButtonStyle"
-        android:backgroundTint="@color/blueBase"
-        android:layout_width="wrap_content"
+        style="@style/LoginButtonStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="50dp"
-        android:paddingEnd="50dp"
-        android:layout_gravity="center"
         android:text="Update Skills"
-        android:textColor="@color/blueLightest"/>
+        android:textColor="@color/blueLight"
+        android:backgroundTint="@color/blueBase"
+        android:layout_marginTop="8dp"/>
 </LinearLayout>

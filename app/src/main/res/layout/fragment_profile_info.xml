@@ -7,10 +7,11 @@
         android:id="@+id/skills_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Names Skills"
+        android:text="Skills"
         android:textStyle="bold"
         android:layout_gravity="center"
-        android:textSize="18sp"
+        android:textSize="25sp"
+        android:textColor="@color/blueBase"
         android:padding="30dp" />
 
     <HorizontalScrollView
@@ -27,10 +28,13 @@
     </HorizontalScrollView>
     <Button
         android:id="@+id/updateSkillsButton"
-        style="@style/BubbleEditText"
+        style="@style/LoginSignupButtonStyle"
         android:backgroundTint="@color/blueBase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        android:layout_gravity="center"
         android:text="Update Skills"
         android:textColor="@color/blueLightest"/>
 </LinearLayout>

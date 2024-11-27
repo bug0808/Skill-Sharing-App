@@ -78,6 +78,7 @@ public class SkillPickActivity extends AppCompatActivity {
             main.putExtra("USER_ID", userId);
             startActivity(main);
         });
+
         db.close();
     }
 

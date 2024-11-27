@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.classes.Guide;
 import com.example.mainactivity.GuideAdapter;
 import com.example.mainactivity.R;
@@ -36,7 +37,12 @@ public class GuidesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guide, container, false);
 
-        guidesViewModel = new ViewModelProvider(this).get(GuidesViewModel.class);
+        // Get the DatabaseHelper instance
+        DatabaseHelper databaseHelper = new DatabaseHelper(requireContext());
+
+        // Use ViewModelProvider with GuidesViewModelFactory to inject the DatabaseHelper
+        guidesViewModel = new ViewModelProvider(this, new GuidesViewModelFactory(databaseHelper))
+                .get(GuidesViewModel.class);
 
         recyclerView = view.findViewById(R.id.recycler_view_guides);
         guideList = new ArrayList<>();
@@ -47,6 +53,7 @@ public class GuidesFragment extends Fragment {
         FloatingActionButton fabAddGuide = view.findViewById(R.id.fab_add_guide);
         fabAddGuide.setOnClickListener(v -> showAddGuideDialog());
 
+        // Observe the guide list to update the RecyclerView when data changes
         guidesViewModel.getGuideList().observe(getViewLifecycleOwner(), updatedList -> {
             guideList.clear();
             guideList.addAll(updatedList);

@@ -16,10 +16,9 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private int lastAssignedId = 0;
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 10;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -58,8 +57,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
     //user table
     String CREATE_USERS_TABLE = "CREATE TABLE users (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "personal_id INTEGER," +
+                "id INTEGER," +
+                "personal_id INTEGER PRIMARY KEY," +
                 "phone TEXT," +
                 "email TEXT," +
                 "password TEXT," +
@@ -87,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "user_id INTEGER," +
                 "skill TEXT," +
                 "PRIMARY KEY(user_id, skill)," +
-                "FOREIGN KEY(user_id) REFERENCES users(personal_id) ON DELETE CASCADE" +
+                "FOREIGN KEY(user_id) REFERENCES users(personal_id)" +
                 ")";
         db.execSQL(CREATE_SKILLS_TABLE);
 
@@ -107,12 +106,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS users");
-        db.execSQL("DROP TABLE IF EXISTS reviews");
-        db.execSQL("DROP TABLE IF EXISTS user_skills");
-        db.execSQL("DROP TABLE IF EXISTS guides");
+        db.execSQL("PRAGMA foreign_keys = OFF;");
+
+        db.execSQL("DELETE FROM user_skills;");
+        db.execSQL("DELETE FROM reviews;");
+        db.execSQL("DELETE FROM guides;");
+
+        db.execSQL("DROP TABLE IF EXISTS users;");
+        db.execSQL("DROP TABLE IF EXISTS reviews;");
+        db.execSQL("DROP TABLE IF EXISTS user_skills;");
+        db.execSQL("DROP TABLE IF EXISTS guides;");
+
         onCreate(db);
+
+        db.execSQL("PRAGMA foreign_keys = ON;");
     }
+
 
     @Override
     public void onOpen(SQLiteDatabase db) {
@@ -411,28 +420,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    // update users skills
     public void updateSkills(int userId, List<String> selectedSkills) {
         SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("PRAGMA foreign_keys = ON;");
 
         db.beginTransaction();
 
         try {
-            db.delete(TABLE_USER_SKILLS, "user_id = ?", new String[]{String.valueOf(userId)});
+            Cursor cursor = db.query(TABLE_USERS, new String[]{"id"}, COLUMN_ID + " = ?",
+                    new String[]{String.valueOf(userId)}, null, null, null);
 
-            ContentValues values = new ContentValues();
-            for (String skill : selectedSkills) {
-                values.clear();
-                values.put("user_id", userId);
-                values.put("skill", skill);
-                db.insert(TABLE_USER_SKILLS, null, values);
+            if (cursor != null && cursor.getCount() > 0) {
+                db.delete(TABLE_USER_SKILLS, "user_id = ?", new String[]{String.valueOf(userId)});
+
+                ContentValues values = new ContentValues();
+                for (String skill : selectedSkills) {
+                    values.clear();
+                    values.put("user_id", userId);
+                    values.put("skill", skill);
+                    db.insert(TABLE_USER_SKILLS, null, values);
+                }
+                db.setTransactionSuccessful();
+                cursor.close();
+            } else {
+                Log.e("DatabaseHelper", "User not found: " + userId);
             }
-            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error updating skills: ", e);
         } finally {
             db.endTransaction();
-            db.close();
         }
     }
+
+
+
 
 
     //skill logging for testing

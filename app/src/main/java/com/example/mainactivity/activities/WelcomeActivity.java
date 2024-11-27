@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private LinearLayout bottomPanel;
@@ -21,10 +24,15 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        List<String> skills = new ArrayList<>();
+        skills.add("Java");
+        skills.add("Python");
+
         DatabaseHelper db = new DatabaseHelper(this);
         //db.deleteUser(0);
         db.logAllUsers();
         db.logUserSkills(1);
+        db.updateSkills(1,skills);
         db.close();
 
         emailConnectButton = findViewById(R.id.emailConnect);

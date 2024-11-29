@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.commonsMath3)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

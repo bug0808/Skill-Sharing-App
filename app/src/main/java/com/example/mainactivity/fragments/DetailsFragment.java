@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.mainactivity.DatabaseHelper;
+import com.example.mainactivity.R;
 import com.example.mainactivity.activities.SkillPickActivity;
 import com.example.mainactivity.activities.WelcomeActivity;
 import com.example.mainactivity.classes.User;
@@ -87,16 +89,19 @@ public class DetailsFragment extends Fragment {
                 return;
             }
 
-            User newUser = new User(firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
+            DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+            int uniqueId = dbHelper.generateUniquePersonalId();
 
-            DatabaseHelper dbHelper = new DatabaseHelper(requireContext());
+            User newUser = new User(firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
+            newUser.setPersonalId(uniqueId);
+
             long userId = dbHelper.addUser(newUser);
             dbHelper.close();
 
             if (userId != -1) {
                 Toast.makeText(requireContext(), "User registered successfully!", Toast.LENGTH_SHORT).show();
                 Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
-                skillPickIntent.putExtra("USER_ID", userId);
+                    skillPickIntent.putExtra("USER_ID", newUser.getPersonalId());
                 skillPickIntent.putExtra("IS_NEW", true);
                 startActivity(skillPickIntent);
                 requireActivity().finish();

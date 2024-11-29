@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.R;
+import com.example.mainactivity.classes.User;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,10 +30,16 @@ public class WelcomeActivity extends AppCompatActivity {
         skills.add("Python");
 
         DatabaseHelper db = new DatabaseHelper(this);
-        //db.deleteUser(0);
+
+        //User user = new User("Seham", "Ahmed", "ahme5540@mylaurier.ca", "Test123!", "1234567890", "11/10/2003");
+        //int id = db.generateUniquePersonalId();
+        //user.setPersonalId(id);
+        //db.addUser(user);
+
+        db.deleteUser(0);
         db.logAllUsers();
-        db.logUserSkills(1);
-        db.updateSkills(1,skills);
+        db.logUserSkills(903618);
+        //db.updateSkills(1,skills);
         db.close();
 
         emailConnectButton = findViewById(R.id.emailConnect);

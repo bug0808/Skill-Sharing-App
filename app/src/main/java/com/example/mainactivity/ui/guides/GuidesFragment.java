@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.classes.Guide;
-import com.example.mainactivity.GuideAdapter;
+import com.example.mainactivity.adapters.GuideAdapter;
 import com.example.mainactivity.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;

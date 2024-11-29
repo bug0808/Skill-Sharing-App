@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.mainactivity.LoginFragment;
+import com.example.mainactivity.fragments.LoginFragment;
 import com.example.mainactivity.R;
-import com.example.mainactivity.SignUpFragment;
+import com.example.mainactivity.fragments.SignUpFragment;
 
 public class LoginActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;

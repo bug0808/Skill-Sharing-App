@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.R;
-import com.example.mainactivity.ReviewAdapter;
-import com.example.mainactivity.activities.LoginActivity;
+import com.example.mainactivity.adapters.ReviewAdapter;
 import com.example.mainactivity.activities.ReviewActivity;
-import com.example.mainactivity.activities.WelcomeActivity;
 import com.example.mainactivity.classes.Review;
 
 import java.util.List;

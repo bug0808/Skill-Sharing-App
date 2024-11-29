@@ -1,8 +1,6 @@
-package com.example.mainactivity;
+package com.example.mainactivity.fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.mainactivity.activities.BottomViewActivity;
-import com.example.mainactivity.activities.HomeActivity;
+import com.example.mainactivity.DatabaseHelper;
+import com.example.mainactivity.R;
 import com.example.mainactivity.activities.MainActivity;
-import com.example.mainactivity.activities.ProfileActivity;
 
 public class LoginFragment extends Fragment {
 
@@ -29,24 +26,20 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        // Initialize UI components
         loginName = view.findViewById(R.id.login_name);
         password = view.findViewById(R.id.password);
         loginButton = view.findViewById(R.id.loginButton);
 
-        // Set click listener for login button
         loginButton.setOnClickListener(v -> {
             String email = loginName.getText().toString().trim();
             String pass = password.getText().toString().trim();
 
-            // Validate the inputs before attempting login
             if (validateInput(email, pass)) {
-                // Check credentials in the database
-                DatabaseHelper db = new DatabaseHelper(getActivity());
-                int userId = db.validateLogin(email, pass);  // Get the user ID
+                DatabaseHelper db = new DatabaseHelper(getContext());
+
+                int userId = db.validateLogin(email, pass);
 
                 if (userId != -1) {
                     Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -55,7 +48,6 @@ public class LoginFragment extends Fragment {
                     getActivity().finish();
 
                 } else {
-                    // Invalid login credentials
                     Toast.makeText(getActivity(), "Invalid email or password", Toast.LENGTH_SHORT).show();
                 }
                 db.close();
@@ -65,7 +57,6 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    // Method to validate the input fields
     private boolean validateInput(String email, String password) {
         if (email.isEmpty()) {
             loginName.setError("Email is required");

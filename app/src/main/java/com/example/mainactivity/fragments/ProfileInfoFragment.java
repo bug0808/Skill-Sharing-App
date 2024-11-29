@@ -1,8 +1,7 @@
-package com.example.mainactivity;
+package com.example.mainactivity.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
+import com.example.mainactivity.DatabaseHelper;
+import com.example.mainactivity.R;
 import com.example.mainactivity.activities.SkillPickActivity;
 
 import java.util.ArrayList;

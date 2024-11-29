@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.classes.Profile;
-import com.example.mainactivity.classes.User;
 
 import java.util.List;
 

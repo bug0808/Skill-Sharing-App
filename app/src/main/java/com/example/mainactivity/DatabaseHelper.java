@@ -10,15 +10,20 @@ import android.util.Log;
 import com.example.mainactivity.classes.Guide;
 import com.example.mainactivity.classes.Review;
 import com.example.mainactivity.classes.User;
+import com.example.mainactivity.classes.UserSkills;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static DatabaseHelper instance;
+
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 18;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -90,6 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")";
         db.execSQL(CREATE_SKILLS_TABLE);
 
+        //guides table
         String CREATE_GUIDES_TABLE = "CREATE TABLE " + TABLE_GUIDES + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_TITLE + " TEXT, "
@@ -258,6 +264,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return -1;
         }
+    }
+
+    // make a unique 6-digit personal ID
+    public int generateUniquePersonalId() {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Random random = new Random();
+        int id;
+        boolean isUnique;
+
+        do {
+            id = 100000 + random.nextInt(900000);
+
+            isUnique = isIdUnique(database, id);
+        } while (!isUnique);
+
+        database.close();
+        return id;
+    }
+
+    // checking if a personal ID is unique
+    private boolean isIdUnique(SQLiteDatabase database, int id) {
+        String query = "SELECT COUNT(*) FROM " + TABLE_USERS + " WHERE " + COLUMN_PERSONAL_ID + " = ?";
+        Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(id)});
+
+        boolean isUnique = false;
+        if (cursor.moveToFirst()) {
+            int count = cursor.getInt(0);
+            isUnique = count == 0;
+        }
+
+        cursor.close();
+        return isUnique;
     }
 
     //logging method for testing/debug
@@ -432,7 +470,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return skills;
     }
 
+    //user a users skill with their id
+    public UserSkills getUserSkillsWithID(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        String query = "SELECT personal_id, GROUP_CONCAT(skill) as skills " +
+                "FROM user_skills " +
+                "WHERE user_id = ? " +
+                "GROUP BY user_id";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        UserSkills user = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int personalId = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+            String skillsString = cursor.getString(cursor.getColumnIndexOrThrow("skills"));
+
+            List<String> skills = new ArrayList<>();
+            if (skillsString != null && !skillsString.isEmpty()) {
+                skills = Arrays.asList(skillsString.split(","));
+            }
+            user = new UserSkills(personalId, skills);
+        }
+        cursor.close();
+        return user;
+    }
+
+    //get all users skills
+    public List<UserSkills> getAllUsersWithSkills() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT u.personal_id, u.first_name, u.last_name, GROUP_CONCAT(us.skill) as skills " +
+                "FROM users u " +
+                "LEFT JOIN user_skills us ON u.personal_id = us.user_id " +
+                "GROUP BY u.personal_id";
+
+        Cursor cursor = db.rawQuery(query, null);
+        List<UserSkills> userList = new ArrayList<>();
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int personalId = cursor.getInt(cursor.getColumnIndexOrThrow("personal_id"));
+                String skillsString = cursor.getString(cursor.getColumnIndexOrThrow("skills"));
+
+                List<String> skills = new ArrayList<>();
+                if (skillsString != null && !skillsString.isEmpty()) {
+                    skills = Arrays.asList(skillsString.split(","));
+                }
+
+                UserSkills user = new UserSkills(personalId, skills);
+                userList.add(user);
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return userList;
+    }
+
+
+
+    //update skills method
     public void updateSkills(int userId, List<String> selectedSkills) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("PRAGMA foreign_keys = ON;");
@@ -440,7 +538,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
 
         try {
-            Cursor cursor = db.query(TABLE_USERS, new String[]{"id"}, COLUMN_ID + " = ?",
+            Cursor cursor = db.query(TABLE_USERS, new String[]{"personal_id"}, COLUMN_PERSONAL_ID + " = ?",
                     new String[]{String.valueOf(userId)}, null, null, null);
 
             if (cursor != null && cursor.getCount() > 0) {

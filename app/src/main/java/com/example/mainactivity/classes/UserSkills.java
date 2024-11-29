@@ -3,33 +3,38 @@ package com.example.mainactivity.classes;
 import java.util.List;
 
 public class UserSkills {
-    private String userId;         // Stores the user's ID
-    private List<String> skills;   // Stores the list of skills
+    private int userId;
+    private List<String> skills;
+    private double similarityScore;
 
-    // Constructor
-    public UserSkills(String userId, List<String> skills) {
+    public UserSkills(int userId, List<String> skills) {
         this.userId = userId;
         this.skills = skills;
+        this.similarityScore = 0.0;
     }
 
-    // Getter for userId
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    // Setter for userId
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    // Getter for skills
     public List<String> getSkills() {
         return skills;
     }
 
-    // Setter for skills
+    public double getSimilarityScore() {
+        return similarityScore;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public void setSkills(List<String> skills) {
         this.skills = skills;
+    }
+
+    public void setSimilarityScore(double similarityScore) {
+        this.similarityScore = similarityScore;
     }
 
     @Override

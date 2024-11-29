@@ -8,16 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mainactivity.ProfileAdapter;
+import com.example.mainactivity.adapters.ProfileAdapter;
 import com.example.mainactivity.R;
-import com.example.mainactivity.ProfileAdapter;
 import com.example.mainactivity.classes.Profile;
-import com.example.mainactivity.classes.User;
 import com.example.mainactivity.DatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -36,8 +33,7 @@ public class FirstFragment extends Fragment {
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_first, container, false);
 
-            searchView = view.findViewById(R.id.search_view);
-            recyclerView = view.findViewById(R.id.recycler_view);
+
             fabSearch = view.findViewById(R.id.fab_search);
 
             // Set up RecyclerView

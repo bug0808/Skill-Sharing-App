@@ -1,5 +1,7 @@
 package com.example.mainactivity.classes;
 
+import com.example.mainactivity.DatabaseHelper;
+
 public class User {
     private String firstName;
     private String lastName;
@@ -9,6 +11,8 @@ public class User {
     private String password;
     private int personalId;
 
+    //private static final String PREFS_NAME = "UserPrefs";
+    //private static final String LAST_ID_KEY = "lastAssignedId";
     private static int lastAssignedId = 0;
 
     public User(String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
@@ -18,11 +22,7 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.password = password;
-        this.personalId = generatePersonalId();
-    }
-
-    private static int generatePersonalId() {
-        return ++lastAssignedId;
+        this.personalId = personalId;
     }
 
     public String getFirstName() {
@@ -51,6 +51,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPersonalId(int ID) {
+        this.personalId = ID;
     }
 
     public void setFirstName(String firstName) {

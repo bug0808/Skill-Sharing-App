@@ -3,9 +3,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import android.annotation.SuppressLint;
@@ -13,10 +10,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.mainactivity.ProfileFragment;
+import com.example.mainactivity.fragments.ProfileFragment;
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMainBinding;
-import com.example.mainactivity.ui.dashboard.DashboardFragment;
 import com.example.mainactivity.ui.guides.GuidesFragment;
 import com.example.mainactivity.ui.home.FirstFragment;
 import com.example.mainactivity.ui.notifications.NotificationsFragment;

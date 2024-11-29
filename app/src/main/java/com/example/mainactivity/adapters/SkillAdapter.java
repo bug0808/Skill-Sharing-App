@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.adapters;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;

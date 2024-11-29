@@ -1,4 +1,4 @@
-package com.example.mainactivity;
+package com.example.mainactivity.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +11,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.mainactivity.DatabaseHelper;
+import com.example.mainactivity.R;
 
 public class SignUpFragment extends Fragment {
 
@@ -31,6 +34,7 @@ public class SignUpFragment extends Fragment {
 
             if (validateInput(email, password, confirmPassword)) {
                 DatabaseHelper db = new DatabaseHelper(getContext());
+
                 if (db.checkIfEmailExists(email)) {
                     Toast.makeText(getContext(), "Email already registered", Toast.LENGTH_SHORT).show();
                 } else {

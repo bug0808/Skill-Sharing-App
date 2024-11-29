@@ -3,21 +3,17 @@ package com.example.mainactivity.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.R;
-import com.example.mainactivity.SkillAdapter;
+import com.example.mainactivity.adapters.SkillAdapter;
+import com.example.mainactivity.classes.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,7 +62,8 @@ public class SkillPickActivity extends AppCompatActivity {
             }
         });
 
-        db = new DatabaseHelper(this);
+        DatabaseHelper db = new DatabaseHelper(this);
+
         Button updateSkillsButton = findViewById(R.id.updateSkills);
 
         updateSkillsButton.setOnClickListener(v -> {

@@ -15,7 +15,7 @@ public class User {
     //private static final String LAST_ID_KEY = "lastAssignedId";
     private static int lastAssignedId = 0;
 
-    public User(String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
+    public User(int personalId, String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;

@@ -92,8 +92,8 @@ public class DetailsFragment extends Fragment {
             DatabaseHelper dbHelper = new DatabaseHelper(getContext());
             int uniqueId = dbHelper.generateUniquePersonalId();
 
-            User newUser = new User(firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
-            newUser.setPersonalId(uniqueId);
+            User newUser = new User(uniqueId, firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
+
 
             long userId = dbHelper.addUser(newUser);
             dbHelper.close();

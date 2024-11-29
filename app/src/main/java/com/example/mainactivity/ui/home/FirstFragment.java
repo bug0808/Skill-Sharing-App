@@ -39,14 +39,14 @@ public class FirstFragment extends Fragment {
             // Set up RecyclerView
             profileList = new ArrayList<>();
             profileAdapter = new ProfileAdapter(profileList);
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recyclerView.setAdapter(profileAdapter);
+            //recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            //recyclerView.setAdapter(profileAdapter);
 
             // Handle FAB click to toggle search
-            fabSearch.setOnClickListener(v -> toggleSearchView());
+            //fabSearch.setOnClickListener(v -> toggleSearchView());
 
             // Listen for search query text changes
-            searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            /** searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     searchProfiles(query);
@@ -122,6 +122,8 @@ public class FirstFragment extends Fragment {
             }
 
             profileAdapter.notifyDataSetChanged();
-        }
+        } **/
+            return view;
     }
+}
 

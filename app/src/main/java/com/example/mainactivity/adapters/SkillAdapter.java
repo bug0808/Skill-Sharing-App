@@ -10,18 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.SkillViewHolder> {
-    private List<String> skills;
-    private List<String> selectedSkills = new ArrayList<>();  // List to track selected skills
+    private List<String> skills; // Current displayed skills
+    private Set<String> selectedSkills; // Persistent set to track selected skills
 
     public SkillAdapter(List<String> skills) {
         this.skills = skills;
+        this.selectedSkills = new HashSet<>(); // Initialize selected skills as a Set to avoid duplicates
     }
 
     public List<String> getSelectedSkills() {
-        return selectedSkills;  // Return the selected skills list
+        return new ArrayList<>(selectedSkills); // Return selected skills as a list
     }
 
     @NonNull
@@ -39,19 +42,19 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.SkillViewHol
 
         // Highlight the item if it's selected
         if (selectedSkills.contains(skill)) {
-            holder.itemView.setBackgroundColor(Color.LTGRAY);  // Change background to show it's selected
+            holder.itemView.setBackgroundColor(Color.LTGRAY); // Change background to show it's selected
         } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);  // Default background
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT); // Default background
         }
 
         // Toggle selection on item click
         holder.itemView.setOnClickListener(v -> {
             if (selectedSkills.contains(skill)) {
-                selectedSkills.remove(skill);  // Deselect the skill if it was selected
-                holder.itemView.setBackgroundColor(Color.TRANSPARENT);  // Reset background
+                selectedSkills.remove(skill); // Deselect the skill if it was selected
+                holder.itemView.setBackgroundColor(Color.TRANSPARENT); // Reset background
             } else {
-                selectedSkills.add(skill);  // Select the skill if it was not selected
-                holder.itemView.setBackgroundColor(Color.LTGRAY);  // Change background to indicate selection
+                selectedSkills.add(skill); // Select the skill if it was not selected
+                holder.itemView.setBackgroundColor(Color.LTGRAY); // Change background to indicate selection
             }
         });
     }
@@ -61,6 +64,7 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.SkillViewHol
         return skills.size();
     }
 
+    // ViewHolder class for skills
     static class SkillViewHolder extends RecyclerView.ViewHolder {
         TextView skillTextView;
 
@@ -70,19 +74,9 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.SkillViewHol
         }
     }
 
-    // Update the skills list and preserve selected skills
+    // Update the displayed skills without affecting the selected skills
     public void updateSkills(List<String> newSkills) {
-        List<String> oldSelectedSkills = new ArrayList<>(selectedSkills);  // Save the old selected skills
-
-        this.skills = newSkills;  // Update the skills list
-
-        // Keep selected skills that are still present in the new list
-        selectedSkills.clear();
-        for (String skill : oldSelectedSkills) {
-            if (newSkills.contains(skill)) {
-                selectedSkills.add(skill);  // Preserve the selected skill if it's in the new list
-            }
-        }
-        notifyDataSetChanged();  // Refresh the RecyclerView with the new data
+        this.skills = newSkills; // Update the skills list
+        notifyDataSetChanged(); // Refresh the RecyclerView with the new data
     }
 }

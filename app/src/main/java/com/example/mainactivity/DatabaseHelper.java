@@ -19,11 +19,9 @@ import java.util.Random;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static DatabaseHelper instance;
-
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 22;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -190,6 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 User user = new User(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB)),
@@ -208,14 +207,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public User getUserByPersonalId(int personalId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_USERS,
-                new String[]{COLUMN_ID, COLUMN_PERSONAL_ID, COLUMN_PHONE, COLUMN_EMAIL, COLUMN_PASSWORD,
-                        COLUMN_FIRST_NAME, COLUMN_LAST_NAME, COLUMN_DOB},
-                COLUMN_PERSONAL_ID + "=?",
-                new String[]{String.valueOf(personalId)}, null, null, null);
+        String query = "SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_PERSONAL_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(personalId)});
 
         if (cursor != null && cursor.moveToFirst()) {
             User user = new User(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
@@ -550,6 +547,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     values.put("user_id", userId);
                     values.put("skill", skill);
                     db.insert(TABLE_USER_SKILLS, null, values);
+                    Log.d("DatabaseHelper", "Inserted skills for user " + userId + ": " + skill);
                 }
                 db.setTransactionSuccessful();
                 cursor.close();
@@ -658,7 +656,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE));
                 String description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION));
 

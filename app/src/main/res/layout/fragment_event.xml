@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/blueLight"
+        app:title="@string/toolbar_title"
+        app:titleTextColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/deleteEventButton"
+        android:layout_width="100dp"
+        android:layout_height="36dp"
+        android:text="@string/delete_event_button" />
+
+    <TextView
+        android:id="@+id/userID"
+        android:layout_width="55dp"
+        android:layout_height="40dp"
+        android:hint="@string/event_id_hint"
+        android:inputType=""
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/editEventTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/event_title_hint"
+        android:inputType="text"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/editEventDescription"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:autofillHints=""
+        android:hint="@string/event_description_hint"
+        android:inputType="text"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/editEventDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/event_date_hint"
+        android:inputType="date"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/editEventLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:hint="@string/event_location_hint"
+        android:inputType="text"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/saveEventButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_event_button"
+        android:textSize="14sp" />
+</LinearLayout>

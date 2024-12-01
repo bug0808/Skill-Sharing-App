@@ -56,6 +56,16 @@
     <string name="title_dashboard">dashboard\n</string>
     <string name="title_notifications">notifications\n</string>
     <string name="title_profile">Profile</string>
+    <string name="toolbar_title">Create Event</string>
+    <string name="delete_event_button">Delete</string>
+    <string name="save_event_button">Save Event</string>
+    <string name="event_id_hint">EventId</string>
+    <string name="event_title_hint">Event Title</string>
+    <string name="event_description_hint">Event Description</string>
+    <string name="event_date_hint">Event Date</string>
+    <string name="event_location_hint">Event Location</string>
+    <string name="Create_Event">Create Event</string>
+    <string name="go_to_events">Go to Events</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

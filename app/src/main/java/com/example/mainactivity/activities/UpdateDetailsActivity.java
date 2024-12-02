@@ -51,11 +51,12 @@ public class UpdateDetailsActivity extends AppCompatActivity {
         }
 
         dobEditText.setOnClickListener(v -> showDatePickerDialog());
-        saveButton.setOnClickListener(v -> saveDetails());
+        saveButton.setOnClickListener(v -> saveDetails(userId));
     }
 
     private void loadUserDetails(int userId) {
         User user = databaseHelper.getUserByPersonalId(userId);
+
         if (user != null) {
             firstNameEditText.setText(user.getFirstName());
             lastNameEditText.setText(user.getLastName());
@@ -68,7 +69,7 @@ public class UpdateDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void saveDetails() {
+    private void saveDetails(int userId) {
         String updatedFirstName = firstNameEditText.getText().toString().trim();
         String updatedLastName = lastNameEditText.getText().toString().trim();
         String updatedEmail = emailEditText.getText().toString().trim();
@@ -76,6 +77,7 @@ public class UpdateDetailsActivity extends AppCompatActivity {
         String updatedDob = dobEditText.getText().toString().trim();
 
         User currentUser = databaseHelper.getUserByPersonalId(userId);
+        String password = currentUser.getPassword();
         if (currentUser == null) {
             Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show();
             return;

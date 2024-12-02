@@ -34,20 +34,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("currUserId", userId);
+            bundle.putInt("profUserId", userId);
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    replaceFragment(new FirstFragment());
+                    FirstFragment firstFragment = new FirstFragment();
+                    firstFragment.setArguments(bundle);
+                    replaceFragment(firstFragment);
                     break;
                 case R.id.navigation_dashboard:
-                    replaceFragment(new GuidesFragment());
+                    GuidesFragment guidesFragment = new GuidesFragment();
+                    guidesFragment.setArguments(bundle);
+                    replaceFragment(guidesFragment);
                     break;
                 case R.id.navigation_notifications:
-                    replaceFragment(new NotificationsFragment());
+                    NotificationsFragment notificationsFragment = new NotificationsFragment();
+                    notificationsFragment.setArguments(bundle);
+                    replaceFragment(notificationsFragment);
                     break;
                 case R.id.navigation_profile:
                     ProfileFragment profileFragment = new ProfileFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("userId", userId);
                     profileFragment.setArguments(bundle);
                     replaceFragment(profileFragment);
                     break;

@@ -34,14 +34,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Initialize TextViews after setContentView
         loginTextView = findViewById(R.id.loginTextView);
         signupTextView = findViewById(R.id.signupTextView);
 
-        // Load the LoginFragment by default when the activity is created
         if (savedInstanceState == null) {
-            loadFragment(new LoginFragment()); // Ensures LoginFragment is shown first
-            highlightSelectedOption(loginTextView); // Highlight the login option by default
+            loadFragment(new LoginFragment());
+            highlightSelectedOption(loginTextView);
         }
 
         // Set click listeners to switch fragments and toggle highlight

@@ -21,8 +21,11 @@ public class SimilarityUtil {
     }
 
     public static int[] getSkillVector(UserSkills user, List<String> allSkills) {
-        int[] vector = new int[allSkills.size()];
+        if (user.getSkills() == null) {
+            return new int[allSkills.size()];
+        }
 
+        int[] vector = new int[allSkills.size()];
         Set<String> userSkillsLowercase = user.getSkills().stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());

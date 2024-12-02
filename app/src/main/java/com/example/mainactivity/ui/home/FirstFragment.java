@@ -1,129 +1,146 @@
-package com.example.mainactivity.ui.home;
+    package com.example.mainactivity.ui.home;
 
-import android.database.Cursor;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+    import android.database.Cursor;
+    import android.database.sqlite.SQLiteDatabase;
+    import android.os.Bundle;
+    import android.text.TextUtils;
+    import android.util.Log;
+    import android.view.LayoutInflater;
+    import android.view.MotionEvent;
+    import android.view.View;
+    import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+    import androidx.annotation.NonNull;
+    import androidx.fragment.app.Fragment;
+    import androidx.recyclerview.widget.LinearLayoutManager;
+    import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mainactivity.adapters.ProfileAdapter;
-import com.example.mainactivity.R;
-import com.example.mainactivity.classes.Profile;
-import com.example.mainactivity.DatabaseHelper;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+    import com.example.mainactivity.activities.ProfileActivity;
+    import com.example.mainactivity.adapters.ProfileAdapter;
+    import com.example.mainactivity.R;
+    import com.example.mainactivity.adapters.ProfileSimAdapter;
+    import com.example.mainactivity.classes.Profile;
+    import com.example.mainactivity.DatabaseHelper;
+    import com.example.mainactivity.classes.User;
+    import com.example.mainactivity.classes.UserSkills;
+    import com.example.mainactivity.SimilarityUtil;
+    import com.example.mainactivity.fragments.ProfileFragment;
+    import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
+    import java.util.ArrayList;
+    import java.util.Collections;
+    import java.util.List;
 
-public class FirstFragment extends Fragment {
+    public class FirstFragment extends Fragment {
 
-        private androidx.appcompat.widget.SearchView searchView;
-        private RecyclerView recyclerView;
-        private FloatingActionButton fabSearch;
-        private ProfileAdapter profileAdapter;
-        private List<Profile> profileList;
+        private RecyclerView simRec, oppRec;
+        private int userId, profUserId;
 
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_first, container, false);
 
+            if (getArguments() != null){
+                userId = getArguments().getInt("currUserId");  // Ensure you are using the correct key
+                profUserId = getArguments().getInt("profUserId");
+                Log.d("FirstFragment", "currUserId: " + userId + ", profUserId: " + profUserId);
+        }
+            Log.d("FirstFragment", "userId: " + userId + ", profUserId: " + profUserId);
+            simRec = view.findViewById(R.id.simRec);
+            simRec.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-            fabSearch = view.findViewById(R.id.fab_search);
+            oppRec = view.findViewById(R.id.oppRec);
+            oppRec.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-            // Set up RecyclerView
-            profileList = new ArrayList<>();
-            profileAdapter = new ProfileAdapter(profileList);
-            //recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            //recyclerView.setAdapter(profileAdapter);
+            loadSimilarProfiles(userId);
+            return view;
+        }
 
-            // Handle FAB click to toggle search
-            //fabSearch.setOnClickListener(v -> toggleSearchView());
+        private void loadSimilarProfiles(int userID) {
+            DatabaseHelper db = new DatabaseHelper(getContext());
+            SQLiteDatabase database = db.getReadableDatabase();
 
-            // Listen for search query text changes
-            /** searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            List<String> skills = db.getUserSkills(database, userID);
+            UserSkills currentUserSkill = new UserSkills(userID, skills);
+            if (currentUserSkill == null) {
+                Log.e("FirstFragment", "Error: currentUserSkill is null for userID: " + userID);
+                return;
+            }
+
+            List<UserSkills> allUserSkills = db.getAllUsersWithSkills();
+            if (allUserSkills == null || allUserSkills.isEmpty()) {
+                Log.e("FirstFragment", "Error: No users found in the database.");
+                return;
+            }
+
+            SimilarityUtil.updateSimilarityScores(allUserSkills);
+            List<UserSkills> topMatches = SimilarityUtil.getTopMatches(currentUserSkill, allUserSkills, allUserSkills.size());
+            if (topMatches == null || topMatches.isEmpty()) {
+                Log.e("FirstFragment", "Error: No top matches found.");
+                return;
+            }
+
+            List<UserSkills> firstTen = topMatches.subList(0, topMatches.size() / 2);
+            List<Profile> firstTenProfiles = convertToProfiles(firstTen);
+            ProfileSimAdapter simRecAdapter = new ProfileSimAdapter(firstTenProfiles);
+            simRec.setAdapter(simRecAdapter);
+
+            List<UserSkills> lastTen = topMatches.subList(topMatches.size() / 2, topMatches.size());
+            Collections.sort(lastTen);
+            List<Profile> lastTenProfiles = convertToProfiles(lastTen);
+            ProfileSimAdapter oppRecAdapter = new ProfileSimAdapter(lastTenProfiles);
+            oppRec.setAdapter(oppRecAdapter);
+
+            // Manually set click listeners for simRec and oppRec items
+            setRecyclerViewItemClickListener(simRec, firstTenProfiles);
+            setRecyclerViewItemClickListener(oppRec, lastTenProfiles);
+        }
+
+        private void setRecyclerViewItemClickListener(RecyclerView recyclerView, List<Profile> profiles) {
+            recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
                 @Override
-                public boolean onQueryTextSubmit(String query) {
-                    searchProfiles(query);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    if (TextUtils.isEmpty(newText)) {
-                        hideRecyclerView();
-                    } else {
-                        searchProfiles(newText);
+                public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                    View childView = rv.findChildViewUnder(e.getX(), e.getY());
+                    if (childView != null && onTouch(childView, profiles.get(rv.getChildAdapterPosition(childView)))) {
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
+
+                @Override
+                public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+
+                @Override
+                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
             });
-
-            // Handle SearchView close button
-            searchView.setOnCloseListener(() -> {
-                hideSearchView();
-                return true;
-            });
-
-            return view;
         }
 
-        private void toggleSearchView() {
-            if (searchView.getVisibility() == View.GONE) {
-                searchView.setVisibility(View.VISIBLE);
-                searchView.requestFocus();
-            } else {
-                hideSearchView();
-            }
+        private boolean onTouch(View childView, Profile profile) {
+            // Handle profile click
+            Bundle bundle = new Bundle();
+            bundle.putInt("userId", userId);
+            bundle.putInt("profUserId", profile.getId());
+
+            ProfileFragment profileFragment = new ProfileFragment();
+            profileFragment.setArguments(bundle);
+
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_layout, profileFragment)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
         }
 
-        private void hideSearchView() {
-            searchView.setVisibility(View.GONE);
-            searchView.setQuery("", false);
-            hideRecyclerView();
-        }
+        private List<Profile> convertToProfiles(List<UserSkills> userSkills) {
+            List<Profile> profiles = new ArrayList<>();
+            DatabaseHelper db = new DatabaseHelper(getContext());
 
-        private void hideRecyclerView() {
-            recyclerView.setVisibility(View.GONE);
-            profileList.clear();
-            profileAdapter.notifyDataSetChanged();
-        }
-
-        private void searchProfiles(String query) {
-            profileList.clear();
-
-            DatabaseHelper dbHelper = new DatabaseHelper(requireContext());
-            // Modify the query to only get id, firstName, and lastName, ordered by lastName
-            Cursor cursor = dbHelper.getReadableDatabase().rawQuery(
-                    "SELECT id, first_name, last_name FROM users WHERE first_name LIKE ? ORDER BY last_name ASC",
-                    new String[]{"%" + query + "%"}
-            );
-
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
-                    String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-                    String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
-                    // Create Profile object with id, firstName, and lastName only
-                    profileList.add(new Profile(id, firstName, lastName));
-                }
-                cursor.close();
+            for (UserSkills userSkill : userSkills) {
+                User user = db.getUserByPersonalId(userSkill.getUserId());
+                Profile profile = new Profile(user.getPersonalId(), user.getFirstName(), user.getLastName());
+                profiles.add(profile);
             }
 
-            if (!profileList.isEmpty()) {
-                recyclerView.setVisibility(View.VISIBLE);
-            } else {
-                recyclerView.setVisibility(View.GONE);
-            }
-
-            profileAdapter.notifyDataSetChanged();
-        } **/
-            return view;
+            return profiles;
+        }
     }
-}
-

@@ -2,7 +2,7 @@ package com.example.mainactivity.classes;
 
 import java.util.List;
 
-public class UserSkills {
+public class UserSkills implements Comparable<UserSkills> {
     private int userId;
     private List<String> skills;
     private double similarityScore;
@@ -43,5 +43,10 @@ public class UserSkills {
                 "userId='" + userId + '\'' +
                 ", skills=" + skills +
                 '}';
+    }
+
+    @Override
+    public int compareTo(UserSkills other) {
+        return Double.compare(this.similarityScore, other.similarityScore);
     }
 }

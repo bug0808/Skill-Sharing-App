@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 27;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -149,7 +149,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DOB, user.getDateOfBirth());
 
         long result = db.insert(TABLE_USERS, null, values);
-        db.close();
         return result;
     }
 
@@ -216,9 +215,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB))
             );
             cursor.close();
             return user;
@@ -275,8 +274,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             isUnique = isIdUnique(database, id);
         } while (!isUnique);
-
-        database.close();
         return id;
     }
 
@@ -354,7 +351,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
         return userIds;
     }
 
@@ -362,7 +358,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean deleteUser(int personalId) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rowsAffected = db.delete(TABLE_USERS, COLUMN_PERSONAL_ID + "=?", new String[]{String.valueOf(personalId)});
-        db.close();
         return rowsAffected > 0;
     }
 
@@ -385,7 +380,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_REVIEW_DATE, review.getDate());
 
         long result = db.insert(TABLE_REVIEWS, null, values);
-        db.close();
         return result;
     }
 
@@ -393,7 +387,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int rowsAffected = db.delete(TABLE_REVIEWS, COLUMN_REVIEW_ID + " = ?",
                 new String[]{String.valueOf(reviewId)});
-        db.close();
         return rowsAffected > 0;
     }
 
@@ -431,7 +424,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
         }
         return reviews;
     }
@@ -471,7 +463,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public UserSkills getUserSkillsWithID(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT personal_id, GROUP_CONCAT(skill) as skills " +
+        String query = "SELECT user_id, GROUP_CONCAT(skill) as skills " +
                 "FROM user_skills " +
                 "WHERE user_id = ? " +
                 "GROUP BY user_id";
@@ -498,32 +490,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<UserSkills> getAllUsersWithSkills() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT u.personal_id, u.first_name, u.last_name, GROUP_CONCAT(us.skill) as skills " +
-                "FROM users u " +
-                "LEFT JOIN user_skills us ON u.personal_id = us.user_id " +
-                "GROUP BY u.personal_id";
+        String query = "SELECT user_id, GROUP_CONCAT(skill) as skills FROM user_skills GROUP BY user_id";
 
         Cursor cursor = db.rawQuery(query, null);
         List<UserSkills> userList = new ArrayList<>();
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                int personalId = cursor.getInt(cursor.getColumnIndexOrThrow("personal_id"));
+                int personalId = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
                 String skillsString = cursor.getString(cursor.getColumnIndexOrThrow("skills"));
 
+                // Log the userId and skillsString
+                Log.d("DatabaseHelper", "Found user with ID: " + personalId + " and skills: " + skillsString);
+
+                // Check if skillsString is valid
                 List<String> skills = new ArrayList<>();
                 if (skillsString != null && !skillsString.isEmpty()) {
                     skills = Arrays.asList(skillsString.split(","));
+                    Log.d("DatabaseHelper", "Skills list: " + skills);
+                } else {
+                    Log.w("DatabaseHelper", "No skills found for user with ID: " + personalId);
                 }
 
+                // Create the UserSkills object and add to the list
                 UserSkills user = new UserSkills(personalId, skills);
                 userList.add(user);
 
             } while (cursor.moveToNext());
+        } else {
+            Log.w("DatabaseHelper", "No users found in user_skills table.");
         }
+
         cursor.close();
         return userList;
     }
+
 
 
 
@@ -589,7 +590,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.e("Database Error", "Error while querying user skills: ", e);
         } finally {
             if (cursor != null) cursor.close();
-            db.close();
         }
     }
 
@@ -603,7 +603,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DESCRIPTION, guide.getDescription());
 
         long id = db.insert(TABLE_GUIDES, null, values);
-        db.close();
         return id;
     }
 
@@ -644,7 +643,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteGuide(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_GUIDES, COLUMN_ID + "=?", new String[] { String.valueOf(id) });
-        db.close();
     }
 
     //get all guides
@@ -665,7 +663,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
             cursor.close();
         }
-        db.close();
         return guideList;
     }
 }

@@ -11,17 +11,13 @@ public class User {
     private String password;
     private int personalId;
 
-    //private static final String PREFS_NAME = "UserPrefs";
-    //private static final String LAST_ID_KEY = "lastAssignedId";
-    private static int lastAssignedId = 0;
-
     public User(int personalId, String firstName, String lastName, String email, String password, String phone, String dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
+        this.password = password;
         this.email = email;
         this.phone = phone;
-        this.password = password;
+        this.dateOfBirth = dateOfBirth;
         this.personalId = personalId;
     }
 

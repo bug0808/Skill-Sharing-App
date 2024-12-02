@@ -8,11 +8,8 @@
     android:background="@color/blueLightest"
     android:padding="16dp">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <RelativeLayout
+            android:id="@+id/relative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -30,6 +27,7 @@
                 android:clipToOutline="true" />
 
             <LinearLayout
+                android:id="@+id/layout"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -47,18 +45,19 @@
                     android:textSize="18sp"
                     android:textColor="@android:color/black" />
             </LinearLayout>
-        </RelativeLayout>
 
-        <!-- Floating Action Button -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            app:backgroundTint="@color/blueBase"
-            app:srcCompat="@android:drawable/ic_menu_edit"
-            app:tint="@android:color/white" />
-    </FrameLayout>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                app:backgroundTint="@color/blueBase"
+                app:fabSize="mini"
+                app:srcCompat="@android:drawable/ic_menu_edit"
+                android:layout_toEndOf="@id/layout"
+                android:visibility="gone"
+                app:tint="@android:color/white" />
+        </RelativeLayout>
 
     <TextView
         android:id="@+id/bioText"
@@ -86,10 +85,12 @@
 
         <TextView
             android:id="@+id/tabInfo"
+            style="@style/LoginSignupButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Info"
-            android:padding="8dp"
+            android:layout_gravity="top"
+            android:paddingBottom="16dp"
             android:layout_weight="1"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -100,10 +101,12 @@
 
         <TextView
             android:id="@+id/tabReviews"
+            style="@style/LoginSignupButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Reviews"
-            android:padding="8dp"
+            android:layout_gravity="top"
+            android:paddingBottom="16dp"
             android:layout_weight="1"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -113,7 +116,6 @@
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- Fragment Container -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"

@@ -35,15 +35,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         Review review = reviews.get(position);
-        // Fetch the reviewer name using the userId from the review
         DatabaseHelper db = new DatabaseHelper(context);
+
         String reviewerName = db.getUserNameByPersonalId(review.getUserId());
 
-        // Set the data in the view holder
-        holder.reviewerName.setText(reviewerName);  // Set the user's name
+        holder.reviewerName.setText(reviewerName);
         holder.reviewText.setText(review.getReviewText());
         holder.reviewDate.setText(review.getDate());
-        holder.ratingBar.setProgress(review.getRating());  // Set the rating progress
+        holder.ratingBar.setProgress(review.getRating());
     }
 
     @Override
@@ -62,7 +61,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             reviewerName = itemView.findViewById(R.id.reviewerName);
             reviewText = itemView.findViewById(R.id.reviewText);
             reviewDate = itemView.findViewById(R.id.reviewDate);
-            ratingBar = itemView.findViewById(R.id.ratingBar);  // Assuming you use ProgressBar for rating
+            ratingBar = itemView.findViewById(R.id.ratingBar);
         }
     }
 }

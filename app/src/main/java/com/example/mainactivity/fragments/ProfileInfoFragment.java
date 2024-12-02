@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,18 @@ public class ProfileInfoFragment extends Fragment {
     private LinearLayout skillsLayout;
     private Button editSkillsButton;
     private List<String> userSkills = new ArrayList<>();
-    private int userId;
+    private int userId, profUserId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getInt("userId", -1);  // Default to -1 if not found
+            userId = getArguments().getInt("userId");
+            profUserId = getArguments().getInt("profUserId");
+            Log.d("ProfileInfoFragment", "userId: " + userId + ", profUserId: " + profUserId);
+
         }
+
         if (userId != -1) {
             userSkills = getUserSkills(getContext(), userId);
         }
@@ -57,12 +62,15 @@ public class ProfileInfoFragment extends Fragment {
             }
         }
 
-        editSkillsButton.setOnClickListener(v -> {
-            Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
-            skillPickIntent.putExtra("USER_ID", userId);
-            skillPickIntent.putExtra("IS_NEW", false);
-            startActivity(skillPickIntent);
-        });
+        if (userId == profUserId) {
+            editSkillsButton.setVisibility(View.VISIBLE);
+            editSkillsButton.setOnClickListener(v -> {
+                Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
+                skillPickIntent.putExtra("USER_ID", userId);
+                skillPickIntent.putExtra("IS_NEW", false);
+                startActivity(skillPickIntent);
+            });
+        }
         return view;
     }
 

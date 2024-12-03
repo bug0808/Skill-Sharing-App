@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.mainactivity.classes.Events;
 import com.example.mainactivity.classes.Guide;
 import com.example.mainactivity.classes.Review;
 import com.example.mainactivity.classes.User;
@@ -21,11 +22,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 32;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
     private static final String TABLE_GUIDES = "guides";
+    private static final String TABLE_LOGIN = "login";
 
     // user Table Columns
     private static final String COLUMN_ID = "id";
@@ -52,6 +54,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_DESCRIPTION = "description";
 
+    //events
+    public static final String TABLE_EVENTS = "events";
+    public static final String COLUMN_EVENT_ID = "_id";
+    public static final String COLUMN_EVENT_TITLE = "title";
+    public static final String COLUMN_EVENT_DESCRIPTION = "description";
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_LOCATION = "location";
+
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -71,10 +82,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ")";
         db.execSQL(CREATE_USERS_TABLE);
 
+        //logged in table
+        String CREATE_LOGIN_TABLE = "CREATE TABLE login (" +
+                "userId INTEGER PRIMARY KEY," +
+                "logged_in INTEGER DEFAULT 0," +
+                "FOREIGN KEY (userId) REFERENCES users(personal_id)" +
+                ")";
+        db.execSQL(CREATE_LOGIN_TABLE);
+
         // reviews table
         String CREATE_REVIEWS_TABLE = "CREATE TABLE reviews (" +
-                "reviewId INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "userId INTEGER," +
+                "reviewId INTEGER," +
+                "userId INTEGER PRIMARY KEY," +
                 "reviewerId INTEGER," +
                 "review_text TEXT," +
                 "rating INTEGER," +
@@ -100,6 +119,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_DESCRIPTION + " TEXT"
                 + ")";
         db.execSQL(CREATE_GUIDES_TABLE);
+
+        //events table
+        String createTableQuery = "CREATE TABLE " + TABLE_EVENTS + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_TITLE + " TEXT, " +
+                COLUMN_DESCRIPTION + " TEXT, " +
+                COLUMN_DATE + " TEXT, " +
+                COLUMN_LOCATION + " TEXT)";
+        db.execSQL(createTableQuery);
     }
 
     @Override
@@ -116,6 +144,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM reviews;");
         db.execSQL("DELETE FROM guides;");
 
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS login;");
         db.execSQL("DROP TABLE IF EXISTS users;");
         db.execSQL("DROP TABLE IF EXISTS reviews;");
         db.execSQL("DROP TABLE IF EXISTS user_skills;");
@@ -125,7 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("PRAGMA foreign_keys = ON;");
     }
-
 
     @Override
     public void onOpen(SQLiteDatabase db) {
@@ -226,6 +255,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // get user by their email
+    public User getUserByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_EMAIL + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(email)});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            User user = new User(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_PERSONAL_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FIRST_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LAST_NAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DOB))
+            );
+            cursor.close();
+            return user;
+        } else {
+            return null;
+        }
+    }
+
     public boolean checkIfEmailExists(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID}, COLUMN_EMAIL + "=?",
@@ -235,7 +288,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null) cursor.close();
         return exists;
     }
-
 
     // checking login logic
     public int validateLogin(String email, String password) {
@@ -361,14 +413,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsAffected > 0;
     }
 
+    //login table functions
+    //setting a user as logged in
+    public void setUserLoggedIn(String userId, boolean isLoggedIn) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("logged_in", isLoggedIn ? 1 : 0);
 
+        db.insertWithOnConflict(TABLE_LOGIN, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
 
+    //checking if a user is logged in
+    public boolean isUserLoggedIn(String userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_LOGIN, new String[]{"logged_in"},
+                "userId" + "=?", new String[]{userId}, null, null, null);
 
+        if (cursor != null && cursor.moveToFirst()) {
+            boolean loggedIn = cursor.getInt(0) == 1;
+            cursor.close();
+            return loggedIn;
+        }
+        return false;
+    }
 
+    //check who is logged in right now
+    public int getLoggedInUserId() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int userId = -1;
 
+        Cursor cursor = db.query("login", new String[]{"userId"}, "logged_in = ?", new String[]{"1"}, null, null, null);
 
+        if (cursor != null && cursor.moveToFirst()) {
+            userId = cursor.getInt(cursor.getColumnIndexOrThrow("userId"));
+            cursor.close();
+        }
+        return userId;
+    }
 
     //review table functions
+    //adding a review
     public long addReview(Review review) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -459,33 +544,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return skills;
     }
 
-    //user a users skill with their id
-    public UserSkills getUserSkillsWithID(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String query = "SELECT user_id, GROUP_CONCAT(skill) as skills " +
-                "FROM user_skills " +
-                "WHERE user_id = ? " +
-                "GROUP BY user_id";
-
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
-        UserSkills user = null;
-
-        if (cursor != null && cursor.moveToFirst()) {
-
-            int personalId = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
-            String skillsString = cursor.getString(cursor.getColumnIndexOrThrow("skills"));
-
-            List<String> skills = new ArrayList<>();
-            if (skillsString != null && !skillsString.isEmpty()) {
-                skills = Arrays.asList(skillsString.split(","));
-            }
-            user = new UserSkills(personalId, skills);
-        }
-        cursor.close();
-        return user;
-    }
-
     //get all users skills
     public List<UserSkills> getAllUsersWithSkills() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -525,9 +583,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userList;
     }
 
-
-
-
     //update skills method
     public void updateSkills(int userId, List<String> selectedSkills) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -561,10 +616,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
     }
-
-
-
-
 
     //skill logging for testing
     public void logUserSkills(int userId) {
@@ -664,5 +715,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return guideList;
+    }
+
+    //event functions
+    //insert event
+    public void insertEvent(String title, String description, String date, String location) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_EVENT_TITLE, title);
+            values.put(COLUMN_EVENT_DESCRIPTION, description);
+            values.put(COLUMN_DATE, date);
+            values.put(COLUMN_LOCATION, location);
+            db.insert(TABLE_EVENTS, null, values);
+        }
+    }
+
+    //get all events
+    public List<Events> getAllEvents() {
+        List<Events> eventsList = new ArrayList<>();
+
+        try (SQLiteDatabase db = this.getReadableDatabase(); Cursor cursor = db.query(TABLE_EVENTS, null, null, null, null, null, null)) {
+
+            if (cursor != null) {
+                int idIndex = cursor.getColumnIndex(COLUMN_EVENT_ID);
+                int titleIndex = cursor.getColumnIndex(COLUMN_EVENT_TITLE);
+                int descriptionIndex = cursor.getColumnIndex(COLUMN_EVENT_DESCRIPTION);
+                int dateIndex = cursor.getColumnIndex(COLUMN_DATE);
+                int locationIndex = cursor.getColumnIndex(COLUMN_LOCATION);
+
+                while (cursor.moveToNext()) {
+                    if (idIndex != -1 && titleIndex != -1 && descriptionIndex != -1 &&
+                            dateIndex != -1 && locationIndex != -1) {
+                        Events event = new Events(
+                                String.valueOf(cursor.getInt(idIndex)),
+                                cursor.getString(titleIndex),
+                                cursor.getString(descriptionIndex),
+                                cursor.getString(dateIndex),
+                                cursor.getString(locationIndex)
+                        );
+                        eventsList.add(event);
+                    }
+                }
+            }
+        }
+        return eventsList;
+    }
+
+    //delete events
+    public boolean deleteEvent(int eventId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Delete the event from the database where eventId matches
+        int result = db.delete(TABLE_EVENTS, COLUMN_EVENT_ID + " = ?", new String[]{String.valueOf(eventId)});
+        db.close();
+        return result > 0;  // Returns true if the event was successfully deleted
     }
 }

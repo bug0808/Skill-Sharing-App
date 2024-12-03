@@ -1,7 +1,9 @@
 package com.example.mainactivity.fragments;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ public class DetailsFragment extends Fragment {
     private EditText lastNameEditText;
     private EditText passwordEditText;
     private Button signUpButton;
+    private int userId;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,11 +97,13 @@ public class DetailsFragment extends Fragment {
 
             User newUser = new User(uniqueId, firstName, lastName, finalEmail, finalPassword, phoneNumber, dob);
 
-
-            long userId = dbHelper.addUser(newUser);
+            userId = newUser.getPersonalId();
+            long valid = dbHelper.addUser(newUser);
             dbHelper.close();
 
-            if (userId != -1) {
+            if (valid != -1) {
+                dbHelper.setUserLoggedIn(String.valueOf(userId), true);
+
                 Toast.makeText(requireContext(), "User registered successfully!", Toast.LENGTH_SHORT).show();
                 Intent skillPickIntent = new Intent(requireActivity(), SkillPickActivity.class);
                     skillPickIntent.putExtra("USER_ID", newUser.getPersonalId());

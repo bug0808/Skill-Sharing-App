@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.mainactivity.fragments.DisplayEventsFragment;
 import com.example.mainactivity.fragments.ProfileFragment;
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMainBinding;
@@ -28,18 +29,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         userId = getIntent().getIntExtra("userId", -1);
-        replaceFragment(new FirstFragment());
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("currUserId", userId);
+        bundle.putInt("profUserId", userId);
+        FirstFragment firstFragment = new FirstFragment();
+        firstFragment.setArguments(bundle);
+        replaceFragment(firstFragment);
         binding.bottomNavigationView.setBackground(null);
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            Bundle bundle = new Bundle();
-            bundle.putInt("currUserId", userId);
-            bundle.putInt("profUserId", userId);
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    FirstFragment firstFragment = new FirstFragment();
                     firstFragment.setArguments(bundle);
                     replaceFragment(firstFragment);
                     break;
@@ -49,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(guidesFragment);
                     break;
                 case R.id.navigation_notifications:
-                    NotificationsFragment notificationsFragment = new NotificationsFragment();
-                    notificationsFragment.setArguments(bundle);
-                    replaceFragment(notificationsFragment);
+                    DisplayEventsFragment displayEventsFragment = new DisplayEventsFragment();
+                    displayEventsFragment.setArguments(bundle);
+                    replaceFragment(displayEventsFragment);
                     break;
                 case R.id.navigation_profile:
                     ProfileFragment profileFragment = new ProfileFragment();

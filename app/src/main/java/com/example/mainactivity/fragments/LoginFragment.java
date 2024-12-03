@@ -1,7 +1,10 @@
 package com.example.mainactivity.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +19,15 @@ import androidx.fragment.app.Fragment;
 import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.R;
 import com.example.mainactivity.activities.MainActivity;
+import com.example.mainactivity.classes.User;
 
 public class LoginFragment extends Fragment {
 
     private EditText loginName;
     private EditText password;
     private Button loginButton;
+    private int valid, userId;
+
 
     @Nullable
     @Override
@@ -39,9 +45,14 @@ public class LoginFragment extends Fragment {
             if (validateInput(email, pass)) {
                 DatabaseHelper db = new DatabaseHelper(getContext());
 
-                int userId = db.validateLogin(email, pass);
+                valid = db.validateLogin(email, pass);
 
-                if (userId != -1) {
+                if (valid != -1) {
+                    User user = db.getUserByEmail(email);
+                    userId = user.getPersonalId();
+                    db.setUserLoggedIn(String.valueOf(userId), true);
+
+                    Log.d("Login", "UserId:" + userId);
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.putExtra("userId", userId);
                     startActivity(intent);

@@ -1,6 +1,7 @@
 package com.example.mainactivity.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -30,37 +31,53 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-
         DatabaseHelper db = new DatabaseHelper(this);
         SQLiteDatabase database = db.getReadableDatabase();
 
-        User user = db.getUserByPersonalId(100);
-        Log.d("Welcome", "id: " + user.getPersonalId() + "first: " + user.getFirstName() + "last: " + user.getLastName() + "email: " + user.getEmail() + "phone: " + user.getPhone() +   "DOB: " + user.getDateOfBirth() + "Pass:" + user.getPassword());
+        int user = db.getLoggedInUserId();
+        Log.d("Welcome", "logged in user: " + user);
+
+        if (user != -1) {
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            intent.putExtra("userId", user);
+            startActivity(intent);
+            finish();
+        }
+
+        //User user = db.getUserByPersonalId(100);
+        //Log.d("Welcome", "id: " + user.getPersonalId() + "first: " + user.getFirstName() + "last: " + user.getLastName() + "email: " + user.getEmail() + "phone: " + user.getPhone() +   "DOB: " + user.getDateOfBirth() + "Pass:" + user.getPassword());
         /**User sam = new User(db.generateUniquePersonalId(), "Seham", "Ahmed", "ahme5540@mylaurier.ca", "Test123!", "1111115092", "11/10/2003");
         db.addUser(sam);
         db.insertUserSkills(database, String.valueOf(sam.getPersonalId()), Arrays.asList("reading", "machine learning", "cooking", "android studio", "gaming"));
 
-        User user1 = new User(db.generateUniquePersonalId(), "Aaron", "Langevin", "lang9150@mylaurier.ca", "Test123!", "8885852882", "06/11/2003");
-        db.addUser(user1);
-        db.insertUserSkills(database, String.valueOf(user1.getPersonalId()), Arrays.asList(("Java", "python", "cooking", "gaming", "driving", "skating"));
+         User areesha = new User(db.generateUniquePersonalId(), "Areesha", "Yahya", "areeshayahya9@gmail.com", "Test123!", "1238904567", "4/18/2003");
+         db.addUser(areesha);
+         db.insertUserSkills(database, String.valueOf(areesha.getPersonalId()), Arrays.asList("SQL", "HTML", "Javascript", "C"));
 
-        User user2 = new User(db.generateUniquePersonalId(), "Test", "2", "test1@gmail.com", "Test123!", "1234567890", "10/11/2001");
-        db.addUser(user2);
-        db.insertUserSkills(database, String.valueOf(user2.getPersonalId()), Arrays.asList("trumpet", "baking", "gardening", "sql", "juggling"));
+        User eli = new User(db.generateUniquePersonalId(),  "Elijah", "Wilts", "ejwilts.ew@gmail.com", "Passw0rd#", "4561237890", "08/08/2003");
+        db.addUser(eli);
+        db.insertUserSkills(database, String.valueOf(eli.getPersonalId()), Arrays.asList("Java","python","Guitar","Woodworking"));
 
-        User user3 = new User(db.generateUniquePersonalId(), "Test", "3", "test2@gmail.com", "Test123!", "1234567890", "10/11/2001");
-        db.addUser(user3);
-        db.insertUserSkills(database, String.valueOf(user3.getPersonalId()), Arrays.asList("biking", "gym", "hiking", "lifting", "gaming"));
+        User aaron = new User(db.generateUniquePersonalId(), "Aaron", "Langevin", "lang9150@mylaurier.ca", "Test123!", "888-585-2882", "06/11/2003");
+        db.addUser(aaron);
+        db.insertUserSkills(database, String.valueOf(aaron.getPersonalId()), Arrays.asList("Java", "python", "cooking", "big data", "gaming", "driving", "skating"));
 
-        User user4 = new User(db.generateUniquePersonalId(), "Test", "4", "test3@gmail.com", "Test123!", "1234567890", "10/11/2001");
-        db.addUser(user4);
-        db.insertUserSkills(database, String.valueOf(user4.getPersonalId()), Arrays.asList("Java", "python", "figma", "machine learning", "singing"));
+        User liza = new User(db.generateUniquePersonalId(), "Liza", "Ahmed", "liza@gmail.com", "Test123!", "1234567890", "12/30/2008");
+        db.addUser(liza);
+        db.insertUserSkills(database, String.valueOf(liza.getPersonalId()), Arrays.asList("Biology", "Medicine", "gaming", "history", "health"));
 
-        User user5 = new User(db.generateUniquePersonalId(), "Test", "5", "test4@gmail.com", "Test123!", "1234567890", "10/11/2001");
-        db.addUser(user5);
-        db.insertUserSkills(database, String.valueOf(user5.getPersonalId()), Arrays.asList("Java", "hairstyling", "soccer", "basketball", "golf"));
+        User rae = new User(db.generateUniquePersonalId(), "Raaya", "Ahmed", "raaya@gmail.com", "Test123!", "1234567890", "03/17/2007");
+        db.addUser(rae);
+        db.insertUserSkills(database, String.valueOf(rae.getPersonalId()), Arrays.asList("architecture", "art", "drawing", "gaming", "music"));
+
+        User miko = new User(db.generateUniquePersonalId(), "Mekael", "Ahmed", "miko@gmail.com", "Test123!", "1234567890", "08/19/2013");
+        db.addUser(miko);
+        db.insertUserSkills(database, String.valueOf(miko.getPersonalId()), Arrays.asList("tornados", "biking", "airplane", "gaming", "music"));
+
+        User yunis = new User(db.generateUniquePersonalId(), "Abdul-Rahman", "Mawlood-Yunis", "470@gmail.com", "Test123!", "1234567890", "08/19/1970");
+        db.addUser(yunis);
+        db.insertUserSkills(database, String.valueOf(yunis.getPersonalId()), Arrays.asList("Java", "Android Studio", "HTML", "Firebase", "Database", "Computer Science"));
 **/
-
         /** User user = db.getUserByPersonalId(555812);
         Log.e("Welc", user.getPersonalId() + user.getFirstName() + user.getLastName());
         List<UserSkills> users = new ArrayList<>();
@@ -97,7 +114,7 @@ public class WelcomeActivity extends AppCompatActivity {
         **/
 
         db.logAllUsers();
-        db.logUserSkills(2);
+        //db.logUserSkills(2);
         db.close();
 
         emailConnectButton = findViewById(R.id.emailConnect);

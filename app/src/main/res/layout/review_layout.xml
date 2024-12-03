@@ -8,7 +8,6 @@
     android:layout_marginBottom="8dp"
     android:elevation="2dp">
 
-    <!-- Reviewer Name -->
     <TextView
         android:id="@+id/reviewerName"
         android:layout_width="wrap_content"
@@ -20,8 +19,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="4dp" />
 
-
-    <!-- RatingBar in the top-right -->
     <RatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
@@ -32,8 +29,6 @@
         android:max="5"
         android:indeterminate="false"/>
 
-
-    <!-- Review Text -->
     <TextView
         android:id="@+id/reviewText"
         android:layout_width="match_parent"
@@ -43,7 +38,6 @@
         android:text="Review Text"
         android:textSize="14sp" />
 
-    <!-- Review Date -->
     <TextView
         android:id="@+id/reviewDate"
         android:layout_width="wrap_content"
@@ -53,5 +47,4 @@
         android:text="Review Date"
         android:textSize="12sp"
         android:textColor="@android:color/darker_gray" />
-
 </RelativeLayout>

@@ -38,7 +38,9 @@ public class ProfileInfoFragment extends Fragment {
 
         }
 
-        if (userId != -1) {
+        if (userId != profUserId) {
+            userSkills = getUserSkills(getContext(), profUserId);
+        } else {
             userSkills = getUserSkills(getContext(), userId);
         }
     }

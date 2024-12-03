@@ -5,6 +5,7 @@
     import android.os.Bundle;
     import android.text.TextUtils;
     import android.util.Log;
+    import android.view.GestureDetector;
     import android.view.LayoutInflater;
     import android.view.MotionEvent;
     import android.view.View;
@@ -41,7 +42,7 @@
             View view = inflater.inflate(R.layout.fragment_first, container, false);
 
             if (getArguments() != null){
-                userId = getArguments().getInt("currUserId");  // Ensure you are using the correct key
+                userId = getArguments().getInt("currUserId");
                 profUserId = getArguments().getInt("profUserId");
                 Log.d("FirstFragment", "currUserId: " + userId + ", profUserId: " + profUserId);
         }
@@ -91,27 +92,57 @@
             ProfileSimAdapter oppRecAdapter = new ProfileSimAdapter(lastTenProfiles);
             oppRec.setAdapter(oppRecAdapter);
 
+            for(UserSkills prof : firstTen) {
+                Log.d("Similarities", prof.getUserId() + String.valueOf(prof.getSimilarityScore()));
+            }
+            for(UserSkills prof : lastTen) {
+                Log.d("Similarities", prof.getUserId() + String.valueOf(prof.getSimilarityScore()));
+            }
+
             // Manually set click listeners for simRec and oppRec items
             setRecyclerViewItemClickListener(simRec, firstTenProfiles);
             setRecyclerViewItemClickListener(oppRec, lastTenProfiles);
         }
 
         private void setRecyclerViewItemClickListener(RecyclerView recyclerView, List<Profile> profiles) {
+            GestureDetector gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+            });
+
             recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
                 @Override
                 public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                     View childView = rv.findChildViewUnder(e.getX(), e.getY());
-                    if (childView != null && onTouch(childView, profiles.get(rv.getChildAdapterPosition(childView)))) {
+                    if (childView != null && gestureDetector.onTouchEvent(e)) {
+                        int position = rv.getChildAdapterPosition(childView);
+                        Profile profile = profiles.get(position);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("currUserId", userId);
+                        bundle.putInt("profUserId", profile.getId());
+
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        profileFragment.setArguments(bundle);
+
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.frame_layout, profileFragment)
+                                .addToBackStack(null)
+                                .commit();
                         return true;
                     }
                     return false;
                 }
 
                 @Override
-                public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {}
+                public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                }
 
                 @Override
-                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                }
             });
         }
 
@@ -136,9 +167,11 @@
             DatabaseHelper db = new DatabaseHelper(getContext());
 
             for (UserSkills userSkill : userSkills) {
-                User user = db.getUserByPersonalId(userSkill.getUserId());
-                Profile profile = new Profile(user.getPersonalId(), user.getFirstName(), user.getLastName());
-                profiles.add(profile);
+                if (userSkill.getUserId() != userId) {
+                    User user = db.getUserByPersonalId(userSkill.getUserId());
+                    Profile profile = new Profile(user.getPersonalId(), user.getFirstName(), user.getLastName());
+                    profiles.add(profile);
+                }
             }
 
             return profiles;

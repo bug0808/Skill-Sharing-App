@@ -56,13 +56,13 @@ public class SimilarityUtil {
 
     public static void updateSimilarityScores(List<UserSkills> users) {
         List<String> allSkills = getAllUniqueSkills(users);
-        for (UserSkills user1 : users) {
-            int[] user1Vector = getSkillVector(user1, allSkills);
-            for (UserSkills user2 : users) {
-                if (user1.getUserId() != user2.getUserId()) {
-                    int[] user2Vector = getSkillVector(user2, allSkills);
-                    double similarity = cosineSimilarity(user1Vector, user2Vector);
-                    user1.setSimilarityScore(similarity);
+        for (UserSkills user : users) {
+            int[] userVector = getSkillVector(user, allSkills);
+            for (UserSkills otherUser : users) {
+                if (!user.equals(otherUser)) {
+                    int[] otherVector = getSkillVector(otherUser, allSkills);
+                    double similarity = cosineSimilarity(userVector, otherVector);
+                    otherUser.setSimilarityScore(similarity);
                 }
             }
         }
@@ -72,23 +72,18 @@ public class SimilarityUtil {
         List<String> allSkills = getAllUniqueSkills(users);
         int[] targetVector = getSkillVector(targetUser, allSkills);
 
-        PriorityQueue<UserSkills> topMatches = new PriorityQueue<>(
-                Comparator.comparingDouble(UserSkills::getSimilarityScore).reversed()
-        );
-
         for (UserSkills user : users) {
             if (!user.equals(targetUser)) {
                 int[] userVector = getSkillVector(user, allSkills);
                 double similarity = cosineSimilarity(targetVector, userVector);
                 user.setSimilarityScore(similarity);
-                topMatches.add(user);
-
-                if (topMatches.size() > topN) {
-                    topMatches.poll();
-                }
             }
         }
 
-        return new ArrayList<>(topMatches);
+        return users.stream()
+                .filter(user -> !user.equals(targetUser))
+                .sorted((a, b) -> Double.compare(b.getSimilarityScore(), a.getSimilarityScore()))
+                .limit(topN)
+                .collect(Collectors.toList());
     }
 }

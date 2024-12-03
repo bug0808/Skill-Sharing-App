@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/star1"
+        android:layout_width="39dp"
+        android:layout_height="103dp"
+        app:srcCompat="@drawable/starhollow"
+        android:layout_marginStart="100dp" />
+
+    <ImageView
+        android:id="@+id/star2"
+        android:layout_width="39dp"
+        android:layout_height="103dp"
+        app:srcCompat="@drawable/starhollow"
+        android:layout_marginStart="145dp" />
+
+    <ImageView
+        android:id="@+id/star3"
+        android:layout_width="39dp"
+        android:layout_height="103dp"
+        app:srcCompat="@drawable/starhollow"
+        android:layout_marginStart="190dp" />
+
+    <ImageView
+        android:id="@+id/star4"
+        android:layout_width="39dp"
+        android:layout_height="103dp"
+        app:srcCompat="@drawable/starhollow"
+        android:layout_marginStart="235dp" />
+
+    <ImageView
+        android:id="@+id/star5"
+        android:layout_width="39dp"
+        android:layout_height="103dp"
+        app:srcCompat="@drawable/starhollow"
+        android:layout_marginStart="280dp" />
+
+</RelativeLayout>

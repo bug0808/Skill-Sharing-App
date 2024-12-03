@@ -2,6 +2,7 @@ package com.example.mainactivity.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class ProfileReviewsFragment extends Fragment {
     private List<Review> reviews;
     private TextView noReviewsTextView;
     private Button reviewButton;
+    private int userId, profId;
 
     @Nullable
     @Override
@@ -43,8 +45,12 @@ public class ProfileReviewsFragment extends Fragment {
 
         // Fetch reviews from the database
         DatabaseHelper db = new DatabaseHelper(getContext());
-        int userId = getArguments().getInt("userId");
-        reviews = db.getReviewsForUser(userId);
+        userId = getArguments().getInt("userId");
+        profId = getArguments().getInt("profUserId");
+        reviews = db.getReviewsForUser(profId);
+
+        Log.d("Profile Reviews Fragment", "UserId: " + userId + ", Profile UserId: " + profId);
+        Log.d("Profile Reviews Fragment", "Reviews: " + reviews.toString());
 
         // Check if the reviews list is empty
         if (reviews.isEmpty()) {
@@ -61,7 +67,7 @@ public class ProfileReviewsFragment extends Fragment {
         reviewButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReviewActivity.class);
             intent.putExtra("userId", userId);
-            //intent.putExtra("userIdToReview", userIdToReview);
+            intent.putExtra("profUserId", profId);
             startActivity(intent);
         });
     

@@ -8,6 +8,17 @@
     android:background="@color/blueLightest"
     android:padding="16dp">
 
+    <Button
+        android:id="@+id/logoutButton"
+        style="@style/LoginButtonStyle"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Logout"
+        android:textColor="@color/blueLight"
+        android:backgroundTint="@color/blueBase"
+        android:layout_gravity="top|end"
+        android:visibility="gone"/>
+
         <RelativeLayout
             android:id="@+id/relative"
             android:layout_width="match_parent"

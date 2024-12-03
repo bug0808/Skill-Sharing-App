@@ -11,16 +11,16 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.mainactivity.DatabaseHelper;
 import com.example.mainactivity.R;
-import com.example.mainactivity.activities.DisplayEvents;
+import com.example.mainactivity.fragments.DisplayEventsFragment;
 
 public class EventFragment extends DialogFragment {
 
     protected EditText editEventTitle, editEventDescription, editEventDate, editEventLocation;
     protected Button saveEventButton;
     protected String userId;
-    private EventsDatabaseHelper eventsDatabaseHelper;
-    private DisplayEvents parentActivity;
+    private DatabaseHelper eventsDatabaseHelper;
 
     public static EventFragment newInstance(String userId) {
         EventFragment fragment = new EventFragment();
@@ -38,37 +38,33 @@ public class EventFragment extends DialogFragment {
             userId = getArguments().getString("userId");
         }
 
-        parentActivity = (DisplayEvents) getActivity();
-
         editEventTitle = rootView.findViewById(R.id.editEventTitle);
         editEventDescription = rootView.findViewById(R.id.editEventDescription);
         editEventDate = rootView.findViewById(R.id.editEventDate);
         editEventLocation = rootView.findViewById(R.id.editEventLocation);
         saveEventButton = rootView.findViewById(R.id.saveEventButton);
 
-        eventsDatabaseHelper = new EventsDatabaseHelper(getContext());
+        eventsDatabaseHelper = new DatabaseHelper(getContext());
 
-        // Set the behavior of the Save button
         saveEventButton.setOnClickListener(v -> {
-            // Get event details from the EditTexts
-            String title = editEventTitle.getText().toString();
-            String description = editEventDescription.getText().toString();
-            String date = editEventDate.getText().toString();
-            String location = editEventLocation.getText().toString();
+            String title = editEventTitle.getText().toString().trim();
+            String description = editEventDescription.getText().toString().trim();
+            String date = editEventDate.getText().toString().trim();
+            String location = editEventLocation.getText().toString().trim();
 
-            // Save the event to the database
+            if (title.isEmpty() || description.isEmpty() || date.isEmpty() || location.isEmpty()) {
+                Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Insert event into the database
             eventsDatabaseHelper.insertEvent(title, description, date, location);
 
-            // Show a confirmation Toast
             Toast.makeText(getContext(), "Event saved!", Toast.LENGTH_SHORT).show();
 
-            // Disable the EditText fields and hide the save button after saving
+            // Disable fields and notify parent fragment to update
             disableEditFields();
-
-            // Optionally, update the RecyclerView in the parent activity
-            parentActivity.fetchEventsFromDatabase();
-
-            // Close the dialog after saving
+            notifyParentFragment();
             dismiss();
         });
 
@@ -83,6 +79,14 @@ public class EventFragment extends DialogFragment {
         editEventLocation.setEnabled(false);
         saveEventButton.setVisibility(View.GONE);
         Log.d("EventFragment", "Fields disabled and save button hidden.");
+    }
+
+    private void notifyParentFragment() {
+        if (getParentFragment() instanceof DisplayEventsFragment) {
+            ((DisplayEventsFragment) getParentFragment()).fetchEventsFromDatabase();
+        } else {
+            Log.e("EventFragment", "Parent fragment is not DisplayEventsFragment!");
+        }
     }
 
     @Override

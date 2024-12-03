@@ -3,6 +3,7 @@ package com.example.mainactivity.activities;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
+import android.content.Context;
 
 import com.example.mainactivity.fragments.ProfileFragment;
 import com.example.mainactivity.R;
@@ -28,7 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
             profileFragment.setArguments(bundle);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, profileFragment); // Replace with the ID of your container
+            transaction.replace(R.id.fragment_container, profileFragment);
             transaction.commit();
         }
     }

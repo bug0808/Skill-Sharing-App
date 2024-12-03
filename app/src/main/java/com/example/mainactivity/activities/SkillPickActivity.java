@@ -72,7 +72,7 @@ public class SkillPickActivity extends AppCompatActivity {
             db.updateSkills(userId, selectedSkills);
 
             Intent main = new Intent(this, MainActivity.class);
-            main.putExtra("USER_ID", userId);
+            main.putExtra("userId", userId);
             startActivity(main);
         });
 

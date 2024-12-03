@@ -25,7 +25,7 @@ public class ReviewActivity extends AppCompatActivity {
     private ImageView star1, star2, star3, star4, star5;
     private EditText reviewEditText;
     private Button submitButton, cancelButton;
-    private int rating = 0;
+    private int userId, profId, rating = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +76,7 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     private void submitReview() {
+        DatabaseHelper db = new DatabaseHelper(this);
         String reviewText = reviewEditText.getText().toString();
 
         if (rating == 0) {
@@ -87,9 +88,9 @@ public class ReviewActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        int loggedInUserId = sharedPreferences.getInt("userId", -1);
-        int userIdToReview = getIntent().getIntExtra("userIdToReview", -1);
+
+        int loggedInUserId = getIntent().getIntExtra("userId", -1);
+        int userIdToReview = getIntent().getIntExtra("profUserId", -1);
 
         if (loggedInUserId == -1 || userIdToReview == -1) {
             Toast.makeText(this, "Error: Invalid user IDs", Toast.LENGTH_SHORT).show();
@@ -103,8 +104,10 @@ public class ReviewActivity extends AppCompatActivity {
 
         if (result != -1) {
             Toast.makeText(this, "Review submitted with " + rating + " stars", Toast.LENGTH_SHORT).show();
+            finish();
         } else {
             Toast.makeText(this, "Error submitting review", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
         rating = 0;

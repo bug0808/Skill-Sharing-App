@@ -3,13 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingStart="50dp"
-    android:paddingEnd="50dp"
+    android:paddingStart="25dp"
+    android:paddingEnd="25dp"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:clickable="true"
-    android:focusable="true"
-    android:padding="16dp">
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/profile_image"

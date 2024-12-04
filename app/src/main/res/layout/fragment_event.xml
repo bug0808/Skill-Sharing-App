@@ -14,7 +14,7 @@
         android:layout_width="100dp"
         android:layout_height="36dp"
         android:backgroundTint="@color/blueBase"
-        android:text="Delete Event" />
+        android:text="@string/delete_event" />
 
     <TextView
         android:id="@+id/userID"
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints=""
-        android:hint="Title"
+        android:hint="@string/title"
         android:inputType="text"
         android:textSize="14sp" />
 
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:autofillHints=""
-        android:hint="Description"
+        android:hint="@string/description"
         android:inputType="text"
         android:textSize="14sp" />
 
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints=""
-        android:hint="Date"
+        android:hint="@string/date"
         android:inputType="date"
         android:textSize="14sp" />
 
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints=""
-        android:hint="Location"
+        android:hint="@string/location"
         android:inputType="text"
         android:textSize="14sp" />
 
@@ -65,7 +65,7 @@
         style="@style/LoginButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Event"
+        android:text="@string/save_event"
         android:backgroundTint="@color/blueBase"
         android:textSize="14sp" />
 </LinearLayout>

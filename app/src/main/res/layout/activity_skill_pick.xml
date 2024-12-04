@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="20dp"
-        android:text="Tell us your skills!"
+        android:text="@string/tell_us_your_skills"
         android:textSize="18dp"
         android:textStyle="bold"
         android:textColor="@color/blueBase"/>
@@ -37,7 +37,7 @@
         android:layout_below="@id/skillsRecyclerView"
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/blueBase"
-        android:text="Update Skills"
+        android:text="@string/update_skills"
         android:textColor="@color/blueLight" />
 
 </LinearLayout>

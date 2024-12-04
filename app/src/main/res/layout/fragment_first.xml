@@ -27,7 +27,7 @@
             android:id="@+id/similarity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Users with similar skills!"
+            android:text="@string/users_with_similar_skills"
             android:textSize="14sp"
             android:textColor="@color/blueBase"
             android:background="@android:color/transparent" />
@@ -50,7 +50,7 @@
             android:id="@+id/opposite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Explore more skills!"
+            android:text="@string/explore_more_skills"
             android:textSize="14sp"
             android:textColor="@color/blueBase"
             android:background="@android:color/transparent" />

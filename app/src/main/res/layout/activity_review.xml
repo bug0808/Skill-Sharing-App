@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="Write Your Review!" />
+        android:text="@string/write_your_review" />
 
     <ImageView
         android:id="@+id/star1"
@@ -65,7 +65,7 @@
         android:minHeight="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="Write your review here" />
+        android:hint="@string/write_your_review_here" />
 
     <!-- LinearLayout for buttons side by side -->
     <LinearLayout
@@ -83,7 +83,7 @@
             android:backgroundTint="@color/blueBase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit"
+            android:text="@string/submit"
             android:layout_marginEnd="8dp"/> <!-- Adds space between buttons -->
 
         <Button
@@ -93,7 +93,7 @@
             android:textColor="@color/blueBase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"/>
+            android:text="@string/cancel"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -10,7 +10,7 @@
 
     <TextView
         style="@style/TitleTextStyle"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@color/blueDark" />
 
     <EditText
@@ -23,14 +23,14 @@
     <EditText
         android:id="@+id/password"
         style="@style/BubbleEditText"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/loginButton"
         style="@style/LoginButtonStyle"
-        android:text="Login"
+        android:text="@string/login"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/blueDark"
         android:textColor="@color/blueLightest"/>

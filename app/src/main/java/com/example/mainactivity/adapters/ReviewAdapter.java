@@ -37,7 +37,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         Review review = reviews.get(position);
         DatabaseHelper db = new DatabaseHelper(context);
 
-        String reviewerName = db.getUserNameByPersonalId(review.getUserId());
+        String reviewerName = db.getUserNameByPersonalId(review.getReviewerId());
 
         holder.reviewerName.setText(reviewerName);
         holder.reviewText.setText(review.getReviewText());

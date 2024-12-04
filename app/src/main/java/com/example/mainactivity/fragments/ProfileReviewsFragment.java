@@ -59,7 +59,6 @@ public class ProfileReviewsFragment extends Fragment {
         } else {
             noReviewsTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-
             adapter = new ReviewAdapter(getContext(), reviews);
             recyclerView.setAdapter(adapter);
         }

@@ -1,5 +1,6 @@
 package com.example.mainactivity.activities;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         FirstFragment firstFragment = new FirstFragment();
         firstFragment.setArguments(bundle);
         replaceFragment(firstFragment);
-        binding.bottomNavigationView.setBackground(null);
 
+        binding.bottomNavigationView.setBackgroundColor(ContextCompat.getColor(this, R.color.blueLight));
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 

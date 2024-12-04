@@ -77,7 +77,7 @@ public class UpdateDetailsActivity extends AppCompatActivity {
         String updatedDob = dobEditText.getText().toString().trim();
 
         User currentUser = databaseHelper.getUserByPersonalId(userId);
-        String password = currentUser.getPassword();
+
         if (currentUser == null) {
             Toast.makeText(this, "Error fetching user data", Toast.LENGTH_SHORT).show();
             return;

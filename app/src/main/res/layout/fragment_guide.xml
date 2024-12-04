@@ -4,18 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blueLightest"
     tools:context=".ui.guides.GuidesFragment">
 
-    <!-- RecyclerView for displaying guides -->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:text="Guides"
+        android:textColor="@color/blueBase"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/recycler_view_guides"
+        android:padding="16dp"/>
 
-    <!-- FloatingActionButton for adding a new guide -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_guides"
         android:layout_width="418dp"
         android:layout_height="620dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:listitem="@layout/item_guide" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,12 +36,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="88dp"
+        android:backgroundTint="@color/blueLight"
         android:contentDescription="@string/add_guide"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_view_guides" />
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view_guides"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

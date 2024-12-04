@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // database and table information
     private static final String DATABASE_NAME = "userDatabase";
-    private static final int DATABASE_VERSION = 32;
+    private static final int DATABASE_VERSION = 33;
     private static final String TABLE_USERS = "users";
     private static final String TABLE_REVIEWS = "reviews";
     private static final String TABLE_USER_SKILLS = "user_skills";
@@ -204,7 +204,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("phone", phone);
         values.put("date_of_birth", dob);
 
-        int rowsAffected = db.update("users", values, "id = ?", new String[]{String.valueOf(userId)});
+        int rowsAffected = db.update("users", values, "personal_id = ?", new String[]{String.valueOf(userId)});
         return rowsAffected > 0;
     }
 

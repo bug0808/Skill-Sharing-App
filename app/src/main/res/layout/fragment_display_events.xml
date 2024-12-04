@@ -6,16 +6,23 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.DisplayEventsFragment">
+    android:background="@color/blueLightest"
+    tools:context=".fragments.DisplayEventsFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/blueLight"
-        app:title="Events"
-        app:titleTextColor="@android:color/white"
-        tools:ignore="MissingConstraints" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top|center"
+        android:padding="16dp"
+        android:text="Events"
+        android:textColor="@color/blueBase"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerView"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
@@ -29,6 +36,8 @@
         android:id="@+id/EventCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/LoginButtonStyle"
+        android:backgroundTint="@color/blueBase"
         android:text="Create Event"
         app:layout_constraintTop_toBottomOf="@id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"

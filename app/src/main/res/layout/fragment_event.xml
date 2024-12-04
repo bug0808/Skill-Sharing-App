@@ -4,20 +4,16 @@
     android:layout_height="400dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/blueLightest">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/blueLight"
-        app:title="Tool Bar"
-        app:titleTextColor="@android:color/white" />
 
     <Button
         android:id="@+id/deleteEventButton"
+        style="@style/LoginButtonStyle"
         android:layout_width="100dp"
         android:layout_height="36dp"
+        android:backgroundTint="@color/blueBase"
         android:text="Delete Event" />
 
     <TextView
@@ -66,8 +62,10 @@
 
     <Button
         android:id="@+id/saveEventButton"
+        style="@style/LoginButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save Event"
+        android:backgroundTint="@color/blueBase"
         android:textSize="14sp" />
 </LinearLayout>

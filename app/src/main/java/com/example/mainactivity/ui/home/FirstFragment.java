@@ -173,7 +173,6 @@
                     profiles.add(profile);
                 }
             }
-
             return profiles;
         }
     }

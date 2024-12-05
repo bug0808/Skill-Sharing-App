@@ -98,5 +98,4 @@ public class WelcomeActivity extends AppCompatActivity {
 
         Log.d("Welcome", "Mock accounts created successfully");
     }
-
 }

@@ -769,4 +769,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return result > 0;  // Returns true if the event was successfully deleted
     }
+
+    // Check if mock accounts are already created
+    public boolean areMockAccountsCreated() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM users";
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count >= 8; // Assuming 8 mock users
+        }
+        cursor.close();
+        return false;
+    }
+
+    // Get user ID by email
+    public int getUserIdByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT id FROM users WHERE email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+        if (cursor.moveToFirst()) {
+            int userId = cursor.getInt(0);
+            cursor.close();
+            return userId;
+        }
+        cursor.close();
+        return -1;
+    }
+
+
 }

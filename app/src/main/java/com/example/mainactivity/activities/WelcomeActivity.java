@@ -34,27 +34,47 @@ public class WelcomeActivity extends AppCompatActivity {
         DatabaseHelper db = new DatabaseHelper(this);
         SQLiteDatabase database = db.getReadableDatabase();
 
-        int user = db.getLoggedInUserId();
-        Log.d("Welcome", "logged in user: " + user);
+        // Check if mock accounts exist
+        if (!db.areMockAccountsCreated()) {
+            createMockAccounts(db, database);
+        }
 
-        if (user != -1) {
+        // Auto-login for "yunis"
+        int yunisUserId = db.getUserIdByEmail("470@gmail.com");
+        if (yunisUserId != -1) {
+            Log.d("Welcome", "Auto-logging in as Yunis, user ID: " + yunisUserId);
             Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-            intent.putExtra("userId", user);
+            intent.putExtra("userId", yunisUserId);
             startActivity(intent);
             finish();
         }
-        /**
+
+        db.logAllUsers();
+        db.close();
+
+        emailConnectButton = findViewById(R.id.emailConnect);
+        emailConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    // Helper method to create mock accounts
+    private void createMockAccounts(DatabaseHelper db, SQLiteDatabase database) {
         User sam = new User(db.generateUniquePersonalId(), "Seham", "Ahmed", "ahme5540@mylaurier.ca", "Test123!", "1111115092", "11/10/2003");
         db.addUser(sam);
         db.insertUserSkills(database, String.valueOf(sam.getPersonalId()), Arrays.asList("reading", "machine learning", "cooking", "android studio", "gaming"));
 
-         User areesha = new User(db.generateUniquePersonalId(), "Areesha", "Yahya", "areeshayahya9@gmail.com", "Test123!", "1238904567", "4/18/2003");
-         db.addUser(areesha);
-         db.insertUserSkills(database, String.valueOf(areesha.getPersonalId()), Arrays.asList("SQL", "HTML", "Javascript", "C"));
+        User areesha = new User(db.generateUniquePersonalId(), "Areesha", "Yahya", "areeshayahya9@gmail.com", "Test123!", "1238904567", "4/18/2003");
+        db.addUser(areesha);
+        db.insertUserSkills(database, String.valueOf(areesha.getPersonalId()), Arrays.asList("SQL", "HTML", "Javascript", "C"));
 
-        User eli = new User(db.generateUniquePersonalId(),  "Elijah", "Wilts", "ejwilts.ew@gmail.com", "Passw0rd#", "4561237890", "08/08/2003");
+        User eli = new User(db.generateUniquePersonalId(), "Elijah", "Wilts", "ejwilts.ew@gmail.com", "Passw0rd#", "4561237890", "08/08/2003");
         db.addUser(eli);
-        db.insertUserSkills(database, String.valueOf(eli.getPersonalId()), Arrays.asList("Java","python","Guitar","Woodworking"));
+        db.insertUserSkills(database, String.valueOf(eli.getPersonalId()), Arrays.asList("Java", "python", "Guitar", "Woodworking"));
 
         User aaron = new User(db.generateUniquePersonalId(), "Aaron", "Langevin", "lang9150@mylaurier.ca", "Test123!", "888-585-2882", "06/11/2003");
         db.addUser(aaron);
@@ -75,19 +95,8 @@ public class WelcomeActivity extends AppCompatActivity {
         User yunis = new User(db.generateUniquePersonalId(), "Abdul-Rahman", "Mawlood-Yunis", "470@gmail.com", "Test123!", "1234567890", "08/19/1970");
         db.addUser(yunis);
         db.insertUserSkills(database, String.valueOf(yunis.getPersonalId()), Arrays.asList("Java", "Android Studio", "HTML", "Firebase", "Database", "Computer Science"));
-**/
 
-        db.logAllUsers();
-        //db.logUserSkills(2);
-        db.close();
-
-        emailConnectButton = findViewById(R.id.emailConnect);
-        emailConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+        Log.d("Welcome", "Mock accounts created successfully");
     }
+
 }
